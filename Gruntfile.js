@@ -1,9 +1,11 @@
 'use strict';
+var serveStatic = require('serve-static');
+var serveIndex = require('serve-index');
 var LIVERELOAD_PORT = 35729;
 var SERVER_PORT = 8000;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 var mountFolder = function (connect, dir) {
-    return connect.static(
+    return serveStatic(
         require('path').resolve(dir),
         {
             // We need to specify a file that will be displayed in place of
@@ -13,7 +15,7 @@ var mountFolder = function (connect, dir) {
     );
 };
 var mountDirectory = function(connect, dir) {
-    return connect.directory(
+    return serveIndex(
         require('path').resolve(dir),
         {
             icons: true,
