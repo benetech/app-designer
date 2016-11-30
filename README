@@ -3,7 +3,13 @@ This repository contains the ODK Application Designer 2.0 software.
 It will be used to create forms that can be uploaded to ODK-App, based on ODK Survey,
 made for Benetech.
 
-Starting ODK Application Designer:
+1. Installing:
+
+Afetr downloading repo on computer run command: 
+
+sudo npm install --save-dev grunt-contrib-connect serve-static serve-index
+
+2. Starting ODK Application Designer:
 
 grunt --verbose connect:livereload:keepalive
  
