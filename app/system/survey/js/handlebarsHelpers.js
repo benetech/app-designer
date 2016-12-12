@@ -59,6 +59,20 @@ Handlebars.registerHelper('stringify', function(value, options) {
     return new Handlebars.SafeString( JSON.stringify(value,null,options) );
 });
 
+Handlebars.registerHelper('setActive', function(name, context, value, index, options) {console.log('propertyExist name, context value', name,' ', context,' ', value);
+    if (context && context[name] !== undefined && context[name] !== null) {
+        if(context[name] === value) {
+            return options.fn(this);
+        } else {
+            return new Handlebars.SafeString("");
+        }
+    } else if (index === 0) {
+        return new Handlebars.SafeString("active");
+    } else {
+        return new Handlebars.SafeString("");
+    }
+});
+
 //Where does this get used?
 Handlebars.registerHelper('formDirectory', function(options) {
     return opendatakit.getCurrentFormPath();

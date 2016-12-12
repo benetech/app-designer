@@ -1575,6 +1575,69 @@ promptTypes.select_one_grid = promptTypes.select_one.extend({
         }
     }
 });
+promptTypes.select_one_slider = promptTypes.select_one.extend({
+    templatePath: "templates/select_slider.handlebars",
+    updateRenderValue: function(formValue) {
+        var that = this;
+        var maxLength = 3;
+        var filteredChoices = _.filter(that.renderContext.choices, function(choice, idx) {
+            if (idx + 1 <= maxLength) {
+                return that.choice_filter(choice);
+            }
+        });
+
+        filteredChoices = _.map(filteredChoices, function(choice, idx) {
+            choice.id = idx;
+            choice.isFirst = false;
+            choice.isSecond = false;
+            choice.isThird = false;
+            choice.isNotToLong = "";
+            if (idx === 0) {
+                choice.isFirst = true;
+                choice.color = "redFrame"
+            }
+            if (idx === 1) {
+                choice.isSecond = true;
+                choice.color = "yellowFrame"
+            }
+            if (idx === 2) {
+                choice.isThird = true;
+                choice.color = "greenFrame"
+            }
+
+            return choice;
+        });
+
+        if ( !formValue ) {
+            that.renderContext.choices = _.map(filteredChoices, function(choice) {
+                choice.checked = false;
+                return choice;
+            });
+            if(this.withOther) {
+                that.renderContext.other = null;
+            }
+            return;
+        }
+        //Check appropriate choices based on formValue
+        that.renderContext.choices = _.map(filteredChoices, function(choice) {
+            choice.checked = _.any(formValue, function(valueObject) {
+                return choice.data_value === valueObject.value;
+            });
+            return choice;
+        });
+        if(this.withOther) {
+            var otherObject = _.find(formValue, function(valueObject) {
+                return ('otherValue' === valueObject.name);
+            });
+            that.renderContext.other = {
+                value: otherObject ? otherObject.value : ' ',
+                checked: _.any(formValue, function(valueObject) {
+                    return ('other' === valueObject.value);
+                })
+            };
+        }
+    }
+});
 promptTypes.select_one_inline = promptTypes.select_one.extend({
     templatePath: "templates/select_inline.handlebars"
 });
