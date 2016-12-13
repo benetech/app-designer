@@ -3,7 +3,7 @@
         {{passiveError}}
     </div>
 {{/if}}
-<form action="javascript:void(0);" onsubmit="odkLeaveField(this);">
+<form action="javascript:void(0);" onsubmit="odkLeaveField(this);" class="form-group">
     {{> labelHint}}
     <div id="carousel-select_one_from_many" class="carousel slide" data-interval="">
         <ol class="carousel-indicators">
@@ -25,10 +25,13 @@
             {{#each choices}}
                 <div class="grid-select-item item
                 {{color}}
-                    {{#setActive ../name ../data data_value @index}}
+                {{#if checked}}
+                    selected
+                {{/if}}
+                {{#setActive ../name ../data data_value @index}}
                     active
                 {{else}}
-                    {{/setActive}}"
+                {{/setActive}}"
                 ><input type="radio"
                     {{#if checked}}
                         checked="checked"
