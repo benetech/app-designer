@@ -256,6 +256,7 @@ var XLSXConverter = {};
         },
         "select_one_with_other" : {"type":"string"},
         "select_one_grid" : {"type":"string"},
+        "select_one_slider" : {"type":"string"},
         "select_one_inline" : {"type":"string"},
         "select_one_dropdown" : {"type":"string"},
         "select_one_integer" : {"type":"integer"},

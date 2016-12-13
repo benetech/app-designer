@@ -239,10 +239,9 @@ input[type="range"]::-webkit-slider-thumb:before {
     but we loose the ability auto-fit arbitrary sized content.
     Maybe I could use a table to get the best of both worlds. 
     */
-    width: auto;
-    margin: auto;
+    width: 130px;
+    margin: 2px;
     padding: 3px;
-    height: 430px;
 }
 .grid-select-item:active {
     border: 1px solid 		#aaa /*{d-bdown-border}*/;
@@ -257,28 +256,44 @@ input[type="range"]::-webkit-slider-thumb:before {
 	background-image:      -o-linear-gradient( #e5e5e5 /*{d-bdown-background-start}*/, #f2f2f2 /*{d-bdown-background-end}*/); /* Opera 11.10+ */
 	background-image:         linear-gradient( #e5e5e5 /*{d-bdown-background-start}*/, #f2f2f2 /*{d-bdown-background-end}*/);
 }
+/* Slider select styles  */
+.carousel-inner > .grid-select-item {
+    width: auto;
+    margin: auto;
+    padding: 1px;
+    height: 420px;
+}
 .carousel-inner > .item > img {
     margin: auto;
 }
 
 .carousel-inner > .item > img {
     min-height: 300px;
-    max-height: 330px;
+    max-height: 350px;
 }
 
-.carousel-inner > .redFrame {
-    background-color: red;
-}
-.carousel-inner > .yellowFrame {
-    background-color: yellow;
-}
-.carousel-inner > .yellowFrame .carousel-caption {
-    color: #00bcd4;
-}
-.carousel-inner > .greenFrame {
-    background-color: green;
+.carousel-inner > .redFrame img {
+    border: 5px solid red;
 }
 
+.carousel-inner > .yellowFrame img {
+    border: 5px solid yellow;
+}
+
+
+.carousel-inner > .greenFrame img {
+    border: 5px solid #0fd40f;
+}
+
+.carousel-control {
+    color: #fff;
+    opacity: .6;
+}
+
+.carousel-control .icon-prev, .carousel-control .icon-next,
+.carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right {
+    top: 40%;
+}
 /* popups */
 #screenPopup > .message {
     font-weight: bold;
