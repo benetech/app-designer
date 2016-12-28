@@ -404,8 +404,12 @@ Eventually we should make a jqm theme for this.
     width: 100%;
 }
 
+.instanceControlButton {
+    font-size: 20px;
+}
+
 .instanceRowControl{
-  float: right;
+    float: right;
 }
 
 .openingRowControl{
@@ -699,4 +703,8 @@ Eventually we should make a jqm theme for this.
     text-align:left;
     overflow:hidden;
     margin-right:50px;
+}
+/* Read only view */
+.read-only {
+    pointer-events: none;
 }

@@ -23,8 +23,8 @@
                     Create new instance
                 </div>
                 <div class="col-xs-4">
-                    <button type="button" class="createInstance btn btn-default" tabindex="0">
-                        <span class="glyphicon glyphicon-plus-sign" style="font-size:20px;"></span>
+                    <button type="button" class="createInstance btn btn-default instanceControlButton" tabindex="0">
+                        <span class="glyphicon glyphicon-plus-sign"></span>
                     </button>
                 </div>
             </div>
@@ -41,8 +41,8 @@
                     Sync selected
                 </div>
                 <div class="col-xs-4">
-                    <button type="button" class="createInstance btn btn-default" tabindex="0">
-                        <span class="glyphicon glyphicon-refresh" style="font-size:20px;"></span>
+                    <button type="button" class="createInstance btn btn-default instanceControlButton" tabindex="0">
+                        <span class="glyphicon glyphicon-refresh"></span>
                     </button>
                 </div>
             </div>
@@ -71,21 +71,26 @@
 									<span class="glyphicon glyphicon-warning-sign"></span></p>
 								{{/if}}
                             </div>
-                            {{#if new_row}}
                             <div class="col-xs-4">
                                 <div class="instanceRowControl btn-group">
-                                    <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default" tabindex="0">
-                                        <span class="glyphicon glyphicon-pencil" style="font-size:20px;">
+                                {{#if new_row}}
+                                    <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default instanceControlButton" tabindex="0">
+                                        <span class="glyphicon glyphicon-pencil">
                                     </button>
 									{{#if show_delete}}
-										<button type="button" id="{{instance_id}}" display_value="{{display_field}}" class="odk deleteInstance btn btn-default" tabindex="0">
-											<span class="glyphicon glyphicon-remove-sign" style="font-size:20px;">
+										<button type="button" id="{{instance_id}}" display_value="{{display_field}}" class="odk deleteInstance btn btn-default instanceControlButton" tabindex="0">
+											<span class="glyphicon glyphicon-remove-sign">
 										</button>
 									{{/if}}
 									<label>Sync <input type="checkbox" id="{{instance_id}}" tabindex="0" class="syncCheckbox"/></label>
+                                {{/if}}
+                                {{#if synced}}
+                                    <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default instanceControlButton" tabindex="0">
+                                        <span class="glyphicon glyphicon-eye-open">
+                                    </button>
+                                {{/if}}
                                 </div>
                             </div>
-                            {{/if}}
                         </div>
                     </fieldset>
                 </li>

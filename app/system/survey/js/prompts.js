@@ -86,6 +86,7 @@ promptTypes.base = Backbone.View.extend({
         var that = this;
         if(that.template) {
             ctxt.success();
+            that._blockAllInputs(that.controller.readOnly);
         } else if(that.templatePath) {
             try {
                 require(['text!'+that.templatePath], function(source) {
@@ -98,6 +99,7 @@ promptTypes.base = Backbone.View.extend({
                                 ctxt.log('I',"prompts."+that.type+"._whenTemplateIsReady.success.setTimeout",
                                             " px: " + that.promptIdx);
                                 ctxt.success();
+                                that._blockAllInputs(that.controller.readOnly);
                             },
                             0 );
                     } catch (e) {
@@ -118,6 +120,22 @@ promptTypes.base = Backbone.View.extend({
         } else {
             ctxt.log('E',"prompts." + that.type + "._whenTemplateIsReady.noTemplate", "px: " + that.promptIdx);
             ctxt.failure({message: "Configuration error: No handlebars template found!"});
+        }
+    },
+    /**
+    * _blockAllInputs
+    * Default mode of viewing the survey enables editing the content in available fields. This function provides
+    * read-only mode for viewing prompts within the surveu. This blocks all inputs, textareas, buttons and selects
+    * in each prompt. Custom form elements are blocked by disabling touch interaction for the element.
+    *
+    * param: readOnly (true/false) defines if a prompt should be displayed in read-only mode.
+    */
+    _blockAllInputs: function(readOnly) {
+        if (readOnly !== null && readOnly !== undefined) {
+            if (readOnly) {
+                $('.odk-base').find('input, textarea, button, select').prop('disabled', true);
+                $('.odk-base').find('form').addClass("read-only");
+            }
         }
     },
     /**
@@ -625,11 +643,15 @@ promptTypes.instances = promptTypes.base.extend({
         evt.stopImmediatePropagation();
         var instanceIdToOpen = $(evt.currentTarget).attr('id');
 
+        var isReadOnly = that.renderContext.instances.find(function( obj ) {
+            return obj.instance_id === instanceIdToOpen;
+        }).synced;
+
         if ( instanceIdToOpen !== null && instanceIdToOpen !== undefined ) {
             var ctxt = that.controller.newContext(evt, that.type + ".openInstance");
             that.controller.enqueueTriggeringContext($.extend({},ctxt,{success:function() {
                 ctxt.log('D',"prompts." + that.type + ".openInstance", "px: " + that.promptIdx);
-                that.controller.openInstance(ctxt, instanceIdToOpen);
+                that.controller.openInstance(ctxt, instanceIdToOpen, isReadOnly);
             }, failure: function(m) {
                 ctxt.log('D',"prompts." + that.type + ".createInstance -- prior event terminated with an error -- aborting!", "px: " + that.promptIdx);
                 ctxt.failure(m);
