@@ -534,6 +534,29 @@ promptTypes.instances = promptTypes.base.extend({
             orderBy = that.convertOrderBy(model);
         }
 
+        // querying database through url didn't seem to work and I wasn't able to fix it, so here is the workaround
+        var url=that.$el[0].baseURI;
+        var keyValues = url.split('&').join('=').split('=');
+        if (keyValues.indexOf('_sync_state') !== -1){
+            var valueIndex = keyValues.indexOf('_sync_state') + 1;
+            selection='_sync_state=?';
+            selectionArgs=[keyValues[valueIndex]];
+            //required to adjust UI depending on choosen submenu
+            switch(selectionArgs[0].substring(1,selectionArgs[0].length-1)){
+                case "new_row":
+                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: true, send: false}});
+                    break;
+                case "synced":
+                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: true}});
+                    break;
+                default:
+                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: false}});
+                    break;
+            }
+        } else {
+            $.extend(that.renderContext, {displayOptions: {new_survey: true, in_progress: false, send: false}});
+        }
+
         // in this case, we are our own 'linked' table.
         database.get_linked_instances($.extend({},ctxt,{success:function(instanceList) {
                 that.renderContext.instances = _.map(instanceList, function(term) {
@@ -555,6 +578,18 @@ promptTypes.instances = promptTypes.base.extend({
 					} else {
 						term.show_delete = false;
 					}
+
+					var sync_state = term.sync_state;
+					if(sync_state === "synced"){
+					    term.synced = true;
+					} else {
+					    term.synced = false;
+					}
+					if(sync_state === "new_row"){
+                        term.new_row = true;
+                    } else {
+                        term.new_row = false;
+                    }
                     return term;
                 });
 
@@ -1375,7 +1410,7 @@ promptTypes.select_one = promptTypes.select.extend({
                         otherValue = _.find(jsonFormSerialization, function(valueObject) {
                             return ('otherValue' === valueObject.name);
                         });
-                        if (otherValue !== null && 
+                        if (otherValue !== null &&
                             otherValue !== undefined &&
                             otherValue.value !== null &&
                             otherValue.value !== undefined &&

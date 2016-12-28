@@ -15,7 +15,7 @@
         <hr>
     </div>
 
-    <div class="instanceClearDiv"></div>
+    {{#if displayOptions.new_survey}}
     <div>
         <fieldset class="instanceNew">
             <div class="row">
@@ -29,11 +29,30 @@
                 </div>
             </div>
         </fieldset>
-        <hr>
     </div>
+    {{/if}}
 
-    <p>Previously created instances:</p>
+<!-- TODO: implement syncing selected forms  -->
+    {{#if displayOptions.in_progress}}
+    <div>
+        <fieldset class="instanceNew">
+            <div class="row">
+                <div class="col-xs-8">
+                    Sync selected
+                </div>
+                <div class="col-xs-4">
+                    <button type="button" class="createInstance btn btn-default" tabindex="0">
+                        <span class="glyphicon glyphicon-refresh" style="font-size:20px;"></span>
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </div>
     <hr>
+    {{/if}}
+
+    {{#unless displayOptions.new_survey}}
+    <p>Previously created instances:</p>
     <div class="instanceList">
         <ul class="list-group">
             {{#each instances}}
@@ -52,6 +71,7 @@
 									<span class="glyphicon glyphicon-warning-sign"></span></p>
 								{{/if}}
                             </div>
+                            {{#if new_row}}
                             <div class="col-xs-4">
                                 <div class="instanceRowControl btn-group">
                                     <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default" tabindex="0">
@@ -62,14 +82,17 @@
 											<span class="glyphicon glyphicon-remove-sign" style="font-size:20px;">
 										</button>
 									{{/if}}
+									<label>Sync <input type="checkbox" id="{{instance_id}}" tabindex="0" class="syncCheckbox"/></label>
                                 </div>
                             </div>
+                            {{/if}}
                         </div>
                     </fieldset>
                 </li>
             {{else}}
-                <li>No saved instances.</li>
+                <li>No instances.</li>
             {{/each}}
         </ul>
     </div>
+    {{/unless}}
 </div>
