@@ -494,6 +494,63 @@ promptTypes.finalize = promptTypes.base.extend({
         }}));
     }
 });
+promptTypes.summary = promptTypes.base.extend({
+    type:"summary",
+    hideInContents: true,
+    templatePath: "templates/summary.handlebars",
+    configureRenderContext: function(ctxt) {
+        var that = this;
+        var lastSave = database.getInstanceMetaDataValue('_savepoint_timestamp');
+        var ts = odkCommon.toDateFromOdkTimeStamp(lastSave);
+        var model = opendatakit.getCurrentModel();
+
+        var displayElementName = opendatakit.getSettingValue('instance_name');
+        if (displayElementName !== null && displayElementName !== undefined) {
+            that.renderContext.display_field = database.getDataValue(displayElementName);
+        } else {
+            that.renderContext.display_field = ts.toISOString();
+        }
+
+        if (that._screen && that._screen._renderContext) {
+            that._screen._renderContext.enableForwardNavigation = false;
+        }
+
+        var summaryQuestion = [];
+        var indicators = [];
+        for(var name in model.data) {
+            var value = model.data[name];
+            var type = model.dataTableModel[name].type;
+            if (value && type) {
+                if (typeof value === "object") {
+                    if (value.latitude && value.longitude && value.altitude) {
+                        type = "location";
+                    }
+                    else if (Object.prototype.toString.call(value) === '[object Array]') {
+                        var output = value;
+                        value = '';
+                        for (var i = 0; i < output.length; i++) {
+                            value += output[i] + ' ';
+                        }
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                else if (typeof value === "string" && value.indexOf("?") >= 0) {
+                    var index = value.lastIndexOf("?");
+                    var color = value.substring(index+1, value.length);
+                    value = value.substring(0, index);
+                    indicators.push({name: name, value: value, color: color});
+                }
+                summaryQuestion.push({name: name, value: value, type: type});
+            }
+        }
+        that.renderContext.summaryQuestion = summaryQuestion;
+        that.renderContext.indicators = indicators;
+
+        ctxt.success();
+    },
+});
 promptTypes.json = promptTypes.base.extend({
     type:"json",
     hideInContents: true,

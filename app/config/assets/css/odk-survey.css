@@ -769,6 +769,13 @@ Eventually we should make a jqm theme for this.
     padding: 0;
 }
 
+.glyphicon-one-fine-dot:before {
+    display: block;
+    content:"\25cf";
+    font-size: 10em;
+    padding-left: 15px;
+}
+
 /* Customized Button */
 .btn-time, .btn-time:focus {
     color: #389b98;
