@@ -197,17 +197,21 @@ var XLSXConverter = {};
                 clause: "do section survey"
             },
          { _row_num: 5,
+             type: "summary",
+             display: { text: "Summary" }
+         },
+         { _row_num: 6,
              type: "finalize",
              display: { text: "Save form" }
          },
-         { _row_num: 6,
+         { _row_num: 7,
              clause: "else // start"
          },
-         { _row_num: 7,
+         { _row_num: 8,
              type: "instances",
              display: { text: "Saved instances" }
          },
-         { _row_num: 8,
+         { _row_num: 9,
              clause: "end if // start"
          }
     ];
@@ -256,6 +260,7 @@ var XLSXConverter = {};
         },
         "select_one_with_other" : {"type":"string"},
         "select_one_grid" : {"type":"string"},
+        "select_one_slider" : {"type":"string"},
         "select_one_inline" : {"type":"string"},
         "select_one_dropdown" : {"type":"string"},
         "select_one_integer" : {"type":"integer"},
@@ -296,6 +301,7 @@ var XLSXConverter = {};
         "user_branch": null,
         "external_link": null,
         "opening": null,
+        "summary": null,
         "instances": null,
         "finalize": null,
         "contents": null,
@@ -409,7 +415,7 @@ var XLSXConverter = {};
     };
 
     /**
-     * Double quote strings if they contain 
+     * Double quote strings if they contain
      * a quote, carriage return, or line feed
      */
     var doubleQuoteString = function(str) {
@@ -418,7 +424,7 @@ var XLSXConverter = {};
                 str.indexOf("\r") !== -1 ||
                 str.indexOf("\n") !== -1 ||
                 str.indexOf("\"") !== -1 ) {
-                
+
                 str = str.replace(/"/g, "\"\"");
                 str = "\"" + str + "\"";
                 return str;
@@ -1866,7 +1872,7 @@ var XLSXConverter = {};
         if ( "values_list" in promptOrAction ) {
             mdef.valuesList = promptOrAction.values_list;
         }
-        
+
         if ( name in model ) {
             var defn = model[name];
             var amodb = deepExtendObject( deepExtendObject(
@@ -2240,7 +2246,7 @@ var XLSXConverter = {};
     ///////////////////////////////////////////////////////////////////////////
     // Now, create the model from the json.
     // this code is shared between survey and XLSXConverter
-    
+
     /**
      * Mark all of the session variables for XLSXConverter
      */
@@ -2274,7 +2280,7 @@ var XLSXConverter = {};
         jsonType.elementName = elementName;
         // and the set is 'data' because it comes from the data model...
         jsonType.elementSet = 'data';
-        
+
         // update element path prefix for recursive elements
         elementPathPrefix = ( elementPathPrefix === undefined || elementPathPrefix === null ) ? elementName : (elementPathPrefix + '.' + elementName);
         // and our own element path is exactly just this prefix
@@ -2367,7 +2373,7 @@ var XLSXConverter = {};
 		var elementTypePrimitive;
         var key;
         var jsonSubDefn;
-            
+
         for ( startKey in dataTableModel ) {
             jsonDefn = dataTableModel[startKey];
             if ( jsonDefn.notUnitOfRetention ) {
@@ -2430,20 +2436,20 @@ var XLSXConverter = {};
         //    elementPath : pathToElement
         //    elementSet : 'data' or 'instanceMetadata' for metadata columns
         //    listChildElementKeys : ['key1', 'key2' ...]
-        //    notUnitOfRetention: true if this declares a complex type that 
+        //    notUnitOfRetention: true if this declares a complex type that
         //         does not get stored (either in session variables or in database columns)
         //
         // within the jsonSchemaType to be used to transform to/from
         // the model contents and data table representation.
-        //    
-        
+        //
+
         var dataTableModel = {};
-        
+
         var f;
         for ( f in specification.model ) {
             dataTableModel[f] = deepCopyObject(specification.model[f]);
         }
-        
+
         // go through the supplied protoModel.formDef model
         // and invert it into the dataTableModel
         var jsonDefn;
@@ -2451,17 +2457,17 @@ var XLSXConverter = {};
             jsonDefn = flattenElementPath( dataTableModel, null, f, null, dataTableModel[f] );
         }
 
-        // traverse the dataTableModel marking which elements are 
+        // traverse the dataTableModel marking which elements are
         // not units of retention.
         markUnitOfRetention(dataTableModel);
 
-        // the framework form has no metadata...        
+        // the framework form has no metadata...
         if ( specification.settings.table_id.value !== "framework" ) {
             // add in the metadata columns...
             // the only ones of these that are settable outside of the data layer are
             //    _form_id
             //    _locale
-            // 
+            //
             // the values for all other metadata are managed within the data layer.
             //
             dataTableModel._id = { type: 'string', isNotNullable: true, elementKey: "_id", elementName: "_id", elementSet: 'instanceMetadata', elementPath: "_id" };
@@ -2481,15 +2487,15 @@ var XLSXConverter = {};
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    
+
     var processJSONWb = function(wbJson){
         warnings.clear();
 
-        // Need to add this in when node is being used to run this 
+        // Need to add this in when node is being used to run this
         if (typeof exports !== 'undefined') {
             if(typeof require !== 'undefined') _ = require('./underscore.js');
         }
-        
+
         _.each(wbJson, function(sheet, sheetName){
             _.each(sheet, function(row, rowIdx){
                 var rowObject = groupColumnHeaders(cleanValues(row));
@@ -2546,7 +2552,7 @@ var XLSXConverter = {};
 
         // restrict the table_id and form_id to be no more than 50 characters long.
         // This allows for versioning on the server and for auxillary shadow status tables.
-        
+
         if ( processedSettings.form_id.value.length > 50 ) {
             throw Error("The value of the 'form_id' setting_name on the settings sheet cannot be more than 50 characters long");
         }
@@ -2560,7 +2566,7 @@ var XLSXConverter = {};
 
         assertValidUserDefinedName("The value of the 'table_id' setting_name on the settings sheet",
                                     processedSettings.table_id.value);
-        
+
         if ( !('survey' in processedSettings) ) {
             throw Error("Please define a 'survey' setting_name on the settings sheet and specify the survey title under display.title");
         }
@@ -2874,7 +2880,7 @@ var XLSXConverter = {};
         // DATA TABLE MODEL
 
         // flatten the data model (removing the nested structures)
-        // This yields the raw content of the columnDefinitions table 
+        // This yields the raw content of the columnDefinitions table
         // plus all the session variables that are in use.
         specification.dataTableModel = getDataTableModelFromSpecification(specification);
 
@@ -2889,7 +2895,7 @@ var XLSXConverter = {};
             var foundTableDefaultViewType = false;
             var foundTableFormTypeSpec = false;
             var foundTableFormTypeSurveySpec = false;
-            
+
             if ('properties' in wbJson) {
                 var cleanSet = wbJson['properties'];
                 cleanSet = omitRowsWithMissingField(cleanSet, 'partition');
@@ -2922,19 +2928,19 @@ var XLSXConverter = {};
                     if ( row.partition === "Column" && row.key === "displayChoicesList" ) {
                         throw Error("Column property 'displayChoicesList' cannot be specified on the 'properties' sheet. This is auto-generated from the model. Error at row: " + row._row_num);
                     }
-                    
+
                     if ( row.partition === "Table" && row.aspect === "default" && row.key === "displayName" ) {
                         throw Error("Table property 'displayName' cannot be specified on the 'properties' sheet. This is auto-generated from the settings. Error at row: " + row._row_num);
                     }
-                    
+
                     if ( row.partition === "Table" && row.aspect === "default" && row.key === "defaultViewType" ) {
                         foundTableDefaultViewType = true;
                     }
-                            
+
                     if ( row.partition === "FormType" && row.aspect === "default" && row.key === "FormType.formType" ) {
                         foundTableFormTypeSpec = true;
                     }
-                    
+
                     if ( row.partition === "SurveyUtil" && row.aspect === "default" && row.key === "SurveyUtil.formId" ) {
                         foundTableFormTypeSurveySpec = true;
                     }
@@ -2957,10 +2963,10 @@ var XLSXConverter = {};
                 // the XLSXconverter already handles expanding complex types
                 // such as geopoint into their underlying storage representation.
                 jsonDefn = specification.dataTableModel[dbColumnName];
-                
+
                 if ( jsonDefn.elementSet === 'data' && !jsonDefn.isSessionVariable ) {
                     var surveyElementName = jsonDefn.elementName;
-                    
+
                     if (jsonDefn.displayName !== undefined && jsonDefn.displayName !== null) {
                         processedProperties.push( {
                             _partition: "Column",
@@ -3002,14 +3008,14 @@ var XLSXConverter = {};
                 processedProperties.push( {_partition: "FormType", _aspect: "default", _key: 'FormType.formType', _type: 'string', _value: 'SURVEY'});
                 processedProperties.push( {_partition: "SurveyUtil", _aspect: "default", _key: 'SurveyUtil.formId', _type: 'string', _value: formId } );
             }
-            
+
             if ( !foundTableDefaultViewType ) {
                 // set the spreadsheet view as the default view...
                 processedProperties.push( {_partition: "Table", _aspect: "default", _key: "defaultViewType", _type: "string", _value: "SPREADSHEET" } );
             }
 
             var formTitle = specification.settings.survey.display.title;
-            processedProperties.push( {_partition: "Table", _aspect: "default", _key: "displayName", _type: "object", 
+            processedProperties.push( {_partition: "Table", _aspect: "default", _key: "displayName", _type: "object",
                               _value: JSON.stringify(formTitle)} );
 
             // Now sort the _key_value_store_active
@@ -3023,7 +3029,7 @@ var XLSXConverter = {};
             }).value();
 
             // These are all the properties that will be written into the properties.csv file.
-            
+
             // TODO: remove these from this file.
             specification.properties = processedProperties;
         }

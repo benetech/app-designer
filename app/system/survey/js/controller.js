@@ -1,7 +1,8 @@
 /* global odkCommon, odkSurvey */
 /**
  * Manages the execution state and screen history of the overall survey,
- * including form validation, saving and marking the form as 'complete'.
+ * including form validation, displaying in read-only/edit (default) view,
+ * saving and marking the form as 'complete'.
  *
  * Delegates the display of individual screens to the screenManager.
  * On page advance, asks the screen manager whether advancing off the
@@ -21,6 +22,7 @@ return {
     eventCount: 0,
     moveFailureMessage: { message: "Internal Error: Unable to determine next prompt." },
     screenManager : null,
+    readOnly: null,
     viewFirstQueuedAction: function() {
         var action = odkCommon.viewFirstQueuedAction();
         if ( action === undefined ) return null;
@@ -1222,7 +1224,12 @@ return {
 
     // exit the page
     leaveInstance:function(ctxt) {
+        var that = this;
         ctxt.success();
+
+        // Reset the read-only mode if it was enabled.
+        that.readOnly = null;
+
         // this would reset to the main page.
         // this.openInstance(ctxt, null);
     },
@@ -1230,9 +1237,13 @@ return {
         var id = opendatakit.genUUID();
         this.openInstance(ctxt, id);
     },
-    openInstance: function(ctxt, id, instanceMetadataKeyValueMap) {
+    openInstance: function(ctxt, id, isReadOnly, instanceMetadataKeyValueMap) {
         var that = this;
         var opPath = that.getCurrentScreenPath();
+
+        // Set viewing mode to read-only if the readOnly parameter is equal to true. If it is not, then the viewing
+        // mode is going to be the default one which enables editing the survey content.
+        that.readOnly = isReadOnly;
 
         // NOTE: if the openInstance call failed, we should popup the error from that...
         database.applyDeferredChanges($.extend({},ctxt,{success:function() {

@@ -394,8 +394,8 @@ return {
                     }
                 }
             },
-            function(errorMsg) { 
-				ctxt.failure({message: errorMsg}); 
+            function(errorMsg) {
+				ctxt.failure({message: errorMsg});
 			});
     },
 
@@ -447,13 +447,14 @@ return {
                         form_id: reqData.getData(rowCntr, '_form_id'),
                         filter_type: reqData.getData(rowCntr, '_filter_type'),
                         filter_value: reqData.getData(rowCntr, '_filter_value'),
-                        effective_access: reqData.getData(rowCntr, '_effective_access')
+                        effective_access: reqData.getData(rowCntr, '_effective_access'),
+                        sync_state: reqData.getData(rowCntr, '_sync_state')
                     });
                 }
                 ctxt.log('D','get_linked_instances.inside', dbTableName + " instanceList: " + instanceList.length);
                 ctxt.success(instanceList);
-            }, function(errorMsg) { 
-				ctxt.failure({message: errorMsg}); 
+            }, function(errorMsg) {
+				ctxt.failure({message: errorMsg});
 			});
     },
 
@@ -479,7 +480,7 @@ return {
                         ctxt.success();
                     }
                 },
-                function(errorMsg) { 
+                function(errorMsg) {
 					that._process_odkData_error(ctxt, errorMsg);
 				});
         } else {
@@ -492,7 +493,7 @@ return {
                         ctxt.success();
                     }
                 },
-                function(errorMsg) { 
+                function(errorMsg) {
 					that._process_odkData_error(ctxt, errorMsg);
 				});
         }
@@ -556,17 +557,17 @@ return {
                     ctxt.success();
                 }
             },
-            function(errorMsg) { 
-				ctxt.failure({message: errorMsg}); 
+            function(errorMsg) {
+				ctxt.failure({message: errorMsg});
 			});
     },
 
 	_auth_error: "org.opendatakit.exception.ActionNotAuthorizedException:",
 	_impl_class_qualifier: " ODKDatabaseImplUtils:",
-	
+
 	_process_odkData_error: function(ctxt, errorMsg) {
 		var that = this;
-		
+
 		if ( errorMsg.startsWith(that._auth_error) ) {
 			// we cannot make the changes because of an Authorization violation. Clear them!
 			that.pendingChanges = {};
@@ -582,10 +583,10 @@ return {
 				errorMsg = errorMsg.substring(0, idxUtils) + errorMsg.substring(idxUtils + that._impl_class_qualifier.length);
 			}
 		}
-		
+
 		ctxt.failure({message: errorMsg, exception: exception, rolledBack: true});
 	},
-	
+
     /**
      * Not expected to be called expect internally
      *
@@ -677,7 +678,7 @@ return {
 			ctxt.success();
 			return;
 		}
-		
+
         that._add_checkpoint($.extend({}, ctxt, {
                 failure:function(m) {
                     // a failure happened during writing -- reload state from db
@@ -809,7 +810,20 @@ return {
     _selectMostRecentFromDataTableStmt:function(dbTableName, selection, selectionArgs, orderBy) {
         var that = this;
         var args = ['deleted'];
-        if ( selection === null || selection === undefined ) {
+        orderBy = '_savepoint_timestamp desc';
+        if( selection === '_sync_state=?') {
+            if(selectionArgs !== null){
+                args = [selectionArgs[0].substring(1,selectionArgs[0].length-1)];
+            }
+            return {
+                    stmt : 'select * from "' + dbTableName + '" as T where (T._sync_state is null or T._sync_state = ?) and ' +
+                        'T._savepoint_timestamp=(select max(V._savepoint_timestamp) from "' + dbTableName +
+                               '" as V where V._id=T._id)' +
+                            ((orderBy === undefined || orderBy === null) ? '' : ' order by ' + orderBy),
+                    bind : args
+                };
+        }
+        else if ( selection === null || selection === undefined ) {
             return {
                     stmt : 'select * from "' + dbTableName + '" as T where (T._sync_state is null or T._sync_state != ?) and ' +
                         'T._savepoint_timestamp=(select max(V._savepoint_timestamp) from "' + dbTableName +

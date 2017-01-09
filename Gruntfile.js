@@ -1640,4 +1640,50 @@ module.exports = function (grunt) {
 
         });
 
+    grunt.registerTask(
+        'adbpush-system-config',
+        'Push everything for tables only to the device',
+        function() {
+            // We need only specific (config/assets) files.
+            // The first parameter is an options object where we specify that
+            // we only want files--this is important because otherwise when
+            // we get directory names adb will push everything in the directory
+            // name, effectively pushing everything twice.  We also specify that we
+            // want everything returned to be relative to 'app' by using 'cwd'.
+            var dirs = grunt.file.expand(
+                {
+                    filter: 'isFile',
+                    cwd: 'app'
+                },
+                '.nomedia',
+                '!config/**',
+                'config/assets/css/odk-survey.css',
+                'config/assets/framework/translations.js',
+                '!config/assets/framework/forms/framework/**',
+                'config/assets/img/**',
+                '!system/**',
+                'system/index.html',
+                'system/js/**',
+                'system/libs/**',
+                'system/survey/js/**',
+                'system/survey/templates/**',
+                '!data/**',
+                '!output/**');
+
+            // Now push these files to the phone.
+            dirs.forEach(function (fileName) {
+                //  Have to add app back into the file name for the adb push
+                var src = tablesConfig.appDir + '/' + fileName;
+                var dest =
+                    tablesConfig.deviceMount +
+                    '/' +
+                    tablesConfig.appName +
+                    '/' +
+                    fileName;
+                grunt.log.writeln('adb push ' + src + ' ' + dest);
+                grunt.task.run('exec:adbpush:' + src + ':' + dest);
+            });
+
+        });
+
 };

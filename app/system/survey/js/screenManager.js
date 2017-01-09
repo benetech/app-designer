@@ -145,18 +145,18 @@ return Backbone.View.extend({
 								success: function() {
 									refreshCtxt.setTerminalContext(that.controller._synthesizePopupContext(opPath, m));
 									refreshCtxt.success();
-								}, 
+								},
 								failure: function(m2) {
 									refreshCtxt.setTerminalContext(that.controller._synthesizePopupContext(opPath, m));
 									refreshCtxt.failure(m2);
 							}}));
-						}, 
+						},
 						failure: function(m2) {
 							that.refreshScreen($.extend({}, refreshCtxt, {
 								success: function() {
 									refreshCtxt.setTerminalContext(that.controller._synthesizePopupContext(opPath, m));
 									refreshCtxt.failure(m2);
-								}, 
+								},
 								failure: function(m3) {
 									refreshCtxt.setTerminalContext(that.controller._synthesizePopupContext(opPath, m));
 									// drop cause of m3
@@ -501,6 +501,10 @@ return Backbone.View.extend({
         }
         var rc = (that.activeScreen && that.activeScreen._renderContext) ?
             that.activeScreen._renderContext : that.renderContext;
+
+        // add information to the view (optionsPopup.handlebars) about the display mode
+        rc.readOnly = that.controller.readOnly;
+
         that.activeScreen.$el.append(that.optionsTemplate(rc)).trigger('pagecreate');
         //$('#optionsPopup').enhanceWithin().popup();
         //$( "#optionsPopup" ).popup( "open" );

@@ -13,6 +13,11 @@
                                 {{#unless showContents}}disabled="disabled"{{/unless}}">
                         Contents
                     </a>
+                {{#if readOnly}}
+                    <a href="#" class="ignore-changes-and-exit btn btn-default">
+                        Exit
+                    </a>
+                {{else}}
                     <a href="#" class="ignore-changes-and-exit btn btn-default">
                         Ignore Changes + Exit
                     </a>
@@ -22,6 +27,7 @@
                     <a href="#" class="finalize-and-exit btn btn-default">
                         Finalize Changes + Exit
                     </a>
+                {{/if}}
                 </div>
             </div>
         </div>

@@ -42,21 +42,35 @@ Handlebars.registerHelper('setting', function(settingName) {
 Handlebars.registerHelper('toFixed', function(value, options) {
     return new Handlebars.SafeString( (value !== undefined && value !== null) ? (+value).toFixed(options) : "" );
 });
-    
+
 Handlebars.registerHelper('toExponential', function(value, options) {
     return new Handlebars.SafeString( (value !== undefined && value !== null) ? (+value).toExponential(options) : "" );
 });
-    
+
 Handlebars.registerHelper('toPrecision', function(value, options) {
     return new Handlebars.SafeString( (value !== undefined && value !== null) ? (+value).toPrecision(options) : "" );
 });
-    
+
 Handlebars.registerHelper('toString', function(value, options) {
     return new Handlebars.SafeString( (value !== undefined && value !== null) ? (+value).toString(options) : "" );
 });
-    
+
 Handlebars.registerHelper('stringify', function(value, options) {
     return new Handlebars.SafeString( JSON.stringify(value,null,options) );
+});
+
+Handlebars.registerHelper('setActive', function(name, context, value, index, options) {
+    if (context && context[name] !== undefined && context[name] !== null) {
+        if(context[name] === value) {
+            return options.fn(this);
+        } else {
+            return new Handlebars.SafeString("");
+        }
+    } else if (index === 0) {
+        return new Handlebars.SafeString("active");
+    } else {
+        return new Handlebars.SafeString("");
+    }
 });
 
 //Where does this get used?
@@ -104,6 +118,13 @@ Handlebars.registerHelper('ifEqual', function(item, value, options) {
     }
 });
 
+Handlebars.registerHelper('ifNotEqual', function(item, value, options) {
+    if(item === value) {
+        return options.inverse(this);
+    } else {
+        return options.fn(this);
+    }
+});
 
 return "handlebarsHelpers were successfully registered";
 });

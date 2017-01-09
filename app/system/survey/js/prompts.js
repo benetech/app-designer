@@ -86,6 +86,7 @@ promptTypes.base = Backbone.View.extend({
         var that = this;
         if(that.template) {
             ctxt.success();
+            that._blockAllInputs(that.controller.readOnly);
         } else if(that.templatePath) {
             try {
                 require(['text!'+that.templatePath], function(source) {
@@ -98,6 +99,7 @@ promptTypes.base = Backbone.View.extend({
                                 ctxt.log('I',"prompts."+that.type+"._whenTemplateIsReady.success.setTimeout",
                                             " px: " + that.promptIdx);
                                 ctxt.success();
+                                that._blockAllInputs(that.controller.readOnly);
                             },
                             0 );
                     } catch (e) {
@@ -118,6 +120,22 @@ promptTypes.base = Backbone.View.extend({
         } else {
             ctxt.log('E',"prompts." + that.type + "._whenTemplateIsReady.noTemplate", "px: " + that.promptIdx);
             ctxt.failure({message: "Configuration error: No handlebars template found!"});
+        }
+    },
+    /**
+    * _blockAllInputs
+    * Default mode of viewing the survey enables editing the content in available fields. This function provides
+    * read-only mode for viewing prompts within the surveu. This blocks all inputs, textareas, buttons and selects
+    * in each prompt. Custom form elements are blocked by disabling touch interaction for the element.
+    *
+    * param: readOnly (true/false) defines if a prompt should be displayed in read-only mode.
+    */
+    _blockAllInputs: function(readOnly) {
+        if (readOnly !== null && readOnly !== undefined) {
+            if (readOnly) {
+                $('.odk-base').find('input, textarea, button, select').prop('disabled', true);
+                $('.odk-base').find('form').addClass("read-only");
+            }
         }
     },
     /**
@@ -476,6 +494,63 @@ promptTypes.finalize = promptTypes.base.extend({
         }}));
     }
 });
+promptTypes.summary = promptTypes.base.extend({
+    type:"summary",
+    hideInContents: true,
+    templatePath: "templates/summary.handlebars",
+    configureRenderContext: function(ctxt) {
+        var that = this;
+        var lastSave = database.getInstanceMetaDataValue('_savepoint_timestamp');
+        var ts = odkCommon.toDateFromOdkTimeStamp(lastSave);
+        var model = opendatakit.getCurrentModel();
+
+        var displayElementName = opendatakit.getSettingValue('instance_name');
+        if (displayElementName !== null && displayElementName !== undefined) {
+            that.renderContext.display_field = database.getDataValue(displayElementName);
+        } else {
+            that.renderContext.display_field = ts.toISOString();
+        }
+
+        if (that._screen && that._screen._renderContext) {
+            that._screen._renderContext.enableForwardNavigation = false;
+        }
+
+        var summaryQuestion = [];
+        var indicators = [];
+        for(var name in model.data) {
+            var value = model.data[name];
+            var type = model.dataTableModel[name].type;
+            if (value && type) {
+                if (typeof value === "object") {
+                    if (value.latitude && value.longitude && value.altitude) {
+                        type = "location";
+                    }
+                    else if (Object.prototype.toString.call(value) === '[object Array]') {
+                        var output = value;
+                        value = '';
+                        for (var i = 0; i < output.length; i++) {
+                            value += output[i] + ' ';
+                        }
+                    }
+                    else {
+                        continue;
+                    }
+                }
+                else if (typeof value === "string" && value.indexOf("?") >= 0) {
+                    var index = value.lastIndexOf("?");
+                    var color = value.substring(index+1, value.length);
+                    value = value.substring(0, index);
+                    indicators.push({name: name, value: value, color: color});
+                }
+                summaryQuestion.push({name: name, value: value, type: type});
+            }
+        }
+        that.renderContext.summaryQuestion = summaryQuestion;
+        that.renderContext.indicators = indicators;
+
+        ctxt.success();
+    },
+});
 promptTypes.json = promptTypes.base.extend({
     type:"json",
     hideInContents: true,
@@ -534,6 +609,29 @@ promptTypes.instances = promptTypes.base.extend({
             orderBy = that.convertOrderBy(model);
         }
 
+        // querying database through url didn't seem to work and I wasn't able to fix it, so here is the workaround
+        var url=that.$el[0].baseURI;
+        var keyValues = url.split('&').join('=').split('=');
+        if (keyValues.indexOf('_sync_state') !== -1){
+            var valueIndex = keyValues.indexOf('_sync_state') + 1;
+            selection='_sync_state=?';
+            selectionArgs=[keyValues[valueIndex]];
+            //required to adjust UI depending on choosen submenu
+            switch(selectionArgs[0].substring(1,selectionArgs[0].length-1)){
+                case "new_row":
+                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: true, send: false}});
+                    break;
+                case "synced":
+                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: true}});
+                    break;
+                default:
+                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: false}});
+                    break;
+            }
+        } else {
+            $.extend(that.renderContext, {displayOptions: {new_survey: true, in_progress: false, send: false}});
+        }
+
         // in this case, we are our own 'linked' table.
         database.get_linked_instances($.extend({},ctxt,{success:function(instanceList) {
                 that.renderContext.instances = _.map(instanceList, function(term) {
@@ -555,6 +653,18 @@ promptTypes.instances = promptTypes.base.extend({
 					} else {
 						term.show_delete = false;
 					}
+
+					var sync_state = term.sync_state;
+					if(sync_state === "synced"){
+					    term.synced = true;
+					} else {
+					    term.synced = false;
+					}
+					if(sync_state === "new_row"){
+                        term.new_row = true;
+                    } else {
+                        term.new_row = false;
+                    }
                     return term;
                 });
 
@@ -590,11 +700,15 @@ promptTypes.instances = promptTypes.base.extend({
         evt.stopImmediatePropagation();
         var instanceIdToOpen = $(evt.currentTarget).attr('id');
 
+        var isReadOnly = that.renderContext.instances.find(function( obj ) {
+            return obj.instance_id === instanceIdToOpen;
+        }).synced;
+
         if ( instanceIdToOpen !== null && instanceIdToOpen !== undefined ) {
             var ctxt = that.controller.newContext(evt, that.type + ".openInstance");
             that.controller.enqueueTriggeringContext($.extend({},ctxt,{success:function() {
                 ctxt.log('D',"prompts." + that.type + ".openInstance", "px: " + that.promptIdx);
-                that.controller.openInstance(ctxt, instanceIdToOpen);
+                that.controller.openInstance(ctxt, instanceIdToOpen, isReadOnly);
             }, failure: function(m) {
                 ctxt.log('D',"prompts." + that.type + ".createInstance -- prior event terminated with an error -- aborting!", "px: " + that.promptIdx);
                 ctxt.failure(m);
@@ -1375,7 +1489,7 @@ promptTypes.select_one = promptTypes.select.extend({
                         otherValue = _.find(jsonFormSerialization, function(valueObject) {
                             return ('otherValue' === valueObject.name);
                         });
-                        if (otherValue !== null && 
+                        if (otherValue !== null &&
                             otherValue !== undefined &&
                             otherValue.value !== null &&
                             otherValue.value !== undefined &&
@@ -1542,6 +1656,69 @@ promptTypes.select_one_grid = promptTypes.select_one.extend({
             if (idx % 3 === 2) {
                 choice.isLastInRow = true;
             }
+            return choice;
+        });
+
+        if ( !formValue ) {
+            that.renderContext.choices = _.map(filteredChoices, function(choice) {
+                choice.checked = false;
+                return choice;
+            });
+            if(this.withOther) {
+                that.renderContext.other = null;
+            }
+            return;
+        }
+        //Check appropriate choices based on formValue
+        that.renderContext.choices = _.map(filteredChoices, function(choice) {
+            choice.checked = _.any(formValue, function(valueObject) {
+                return choice.data_value === valueObject.value;
+            });
+            return choice;
+        });
+        if(this.withOther) {
+            var otherObject = _.find(formValue, function(valueObject) {
+                return ('otherValue' === valueObject.name);
+            });
+            that.renderContext.other = {
+                value: otherObject ? otherObject.value : ' ',
+                checked: _.any(formValue, function(valueObject) {
+                    return ('other' === valueObject.value);
+                })
+            };
+        }
+    }
+});
+promptTypes.select_one_slider = promptTypes.select_one.extend({
+    templatePath: "templates/select_slider.handlebars",
+    updateRenderValue: function(formValue) {
+        var that = this;
+        var maxLength = 3;
+        var filteredChoices = _.filter(that.renderContext.choices, function(choice, idx) {
+            if (idx + 1 <= maxLength) {
+                return that.choice_filter(choice);
+            }
+        });
+
+        filteredChoices = _.map(filteredChoices, function(choice, idx) {
+            choice.id = idx;
+            choice.isFirst = false;
+            choice.isSecond = false;
+            choice.isThird = false;
+            choice.isNotToLong = "";
+            if (idx === 0) {
+                choice.isFirst = true;
+                choice.color = "red"
+            }
+            if (idx === 1) {
+                choice.isSecond = true;
+                choice.color = "yellow"
+            }
+            if (idx === 2) {
+                choice.isThird = true;
+                choice.color = "green"
+            }
+
             return choice;
         });
 

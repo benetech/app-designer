@@ -1,0 +1,76 @@
+{{#if passiveError}}
+    <div>
+        {{passiveError}}
+    </div>
+{{/if}}
+<form action="javascript:void(0);" onsubmit="odkLeaveField(this);" class="form-group">
+    {{> labelHint}}
+    <div id="carousel-select_one_from_many" class="carousel slide" data-interval="">
+        <ol class="carousel-indicators">
+            {{#each choices}}
+                <li data-target="#carousel-select_one_from_many" data-slide-to="{{@index}}" class="
+                    {{#setActive ../name ../data data_value @index}}
+                    active
+                    {{else}}
+                    {{/setActive}}
+                    ">
+                </li>
+
+            {{/each}}
+        </ol>
+
+        <!-- Sliders -->
+        <div class="carousel-inner">
+
+            {{#each choices}}
+                <div class="grid-select-item item
+                {{color}}
+                {{#if checked}}
+                    selected
+                {{/if}}
+                {{#setActive ../name ../data data_value @index}}
+                    active
+                {{else}}
+                {{/setActive}}">
+                    <div>
+                        <input type="radio"
+                        {{#if checked}}
+                            checked="checked"
+                        {{/if}}
+                            name="{{../name}}"
+                            id="{{data_value}}"
+                            value="{{data_value}}"
+                            tabindex="0">
+                        {{#if display.image}}
+                            <div class="slider-size slider-image" style="background: url('{{formDirectory}}{{localize display.image}}') no-repeat center center; background-size: contain;"></div>
+                        {{/if}}
+                    </div>
+
+                    <div class="carousel-caption">
+                        {{#if display.text}}
+                            <h3> {{{localize display.text}}}</h3>
+                        {{else}}
+                            <h3>{{data_value}}</h3>
+                        {{/if}}
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+
+        <a class="left carousel-control" href="#carousel-select_one_from_many" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a class="right carousel-control" href="#carousel-select_one_from_many" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+    </div>
+    <!-- container -->
+    {{#unless required}}
+        {{#if false}}
+            {{#if display.deselect}}
+                <a data-role="button" data-mini="true" class="deselect" tabindex="0">{{localize display.deselect}}</a>
+            {{/if}}
+        {{/if}}
+    {{/unless}}
+    <div style="clear:both;"></div>
+</form>
