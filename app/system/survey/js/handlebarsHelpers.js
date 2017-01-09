@@ -59,7 +59,7 @@ Handlebars.registerHelper('stringify', function(value, options) {
     return new Handlebars.SafeString( JSON.stringify(value,null,options) );
 });
 
-Handlebars.registerHelper('setActive', function(name, context, value, index, options) {console.log('propertyExist name, context value', name,' ', context,' ', value);
+Handlebars.registerHelper('setActive', function(name, context, value, index, options) {
     if (context && context[name] !== undefined && context[name] !== null) {
         if(context[name] === value) {
             return options.fn(this);

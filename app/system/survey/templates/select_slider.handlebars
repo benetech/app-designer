@@ -12,8 +12,8 @@
                     {{#setActive ../name ../data data_value @index}}
                     active
                     {{else}}
-                {{/setActive}}
-                    ">{{choice}}
+                    {{/setActive}}
+                    ">
                 </li>
 
             {{/each}}
@@ -31,21 +31,22 @@
                 {{#setActive ../name ../data data_value @index}}
                     active
                 {{else}}
-                {{/setActive}}"
-                ><input type="radio"
-                    {{#if checked}}
-                        checked="checked"
-                    {{/if}}
-                        name="{{../name}}"
-                        id="{{data_value}}"
-                        value="{{data_value}}"
-                        tabindex="0">
-                    {{#if display.image}}
-                        <img src="{{formDirectory}}{{localize display.image}}">
-                    {{/if}}
+                {{/setActive}}">
+                    <div>
+                        <input type="radio"
+                        {{#if checked}}
+                            checked="checked"
+                        {{/if}}
+                            name="{{../name}}"
+                            id="{{data_value}}"
+                            value="{{data_value}}"
+                            tabindex="0">
+                        {{#if display.image}}
+                            <div class="slider-size slider-image" style="background: url('{{formDirectory}}{{localize display.image}}') no-repeat center center; background-size: contain;"></div>
+                        {{/if}}
+                    </div>
 
                     <div class="carousel-caption">
-
                         {{#if display.text}}
                             <h3> {{{localize display.text}}}</h3>
                         {{else}}

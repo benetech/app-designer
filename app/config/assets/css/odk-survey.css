@@ -262,51 +262,49 @@ input[type="range"]::-webkit-slider-thumb:before {
     width: auto;
     margin: auto;
     padding: 1px;
-    height: 440px;
+    height: 100%;
 }
 
 .carousel-inner > .item > img {
     margin: auto;
 }
 
-
-.carousel-inner > .item > img {
-    min-height: 300px;
-    max-height: 350px;
-}
-
-.carousel-inner > .item img {
+.carousel-inner > .item .slider-image {
     border: 5px solid transparent;
 }
 
-.carousel-inner > .redFrame.selected img {
-    border: 5px solid #b10808;
+.slider-size {
+    height: 160px;
 }
 
-.carousel-inner > .yellowFrame.selected img {
-    border: 5px solid #d2d206;
+ .carousel-inner > .red.selected .slider-image {
+    border-color: #b10808;
 }
 
-.carousel-inner > .greenFrame.selected img {
-    border: 5px solid #2f892f;
+.carousel-inner > .yellow.selected .slider-image {
+    border-color: #ffe73b;
 }
 
-.carousel-inner > .redFrame .carousel-caption {
+.carousel-inner > .green.selected .slider-image {
+    border-color: #2f892f;
+}
+
+.carousel-inner > .red .carousel-caption {
     background: #b10808;
 }
 
-.carousel-inner > .yellowFrame .carousel-caption {
-    background: #b7b706;
+.carousel-inner > .yellow .carousel-caption {
+    background: #ffe73b;
     color: #31502d;
     text-shadow: none;
 }
 
-.carousel-inner > .greenFrame .carousel-caption {
-    background: #2b712b;
+.carousel-inner > .green .carousel-caption {
+    background: #2f892f;
 }
 
 .carousel-control {
-    color: #fff;
+    color: #ffffff;
     opacity: .6;
 }
 
@@ -316,7 +314,7 @@ input[type="range"]::-webkit-slider-thumb:before {
 }
 
 .carousel-indicators {
-    bottom: 90%;
+    bottom: 80%;
 }
 
 .carousel-indicators li {
@@ -327,8 +325,110 @@ input[type="range"]::-webkit-slider-thumb:before {
     bottom: 0;
     padding: 10px;
     left: 0;
-    right: 0;;
+    right: 0;
+    position: relative;
 }
+
+.carousel-caption h3 {
+    margin-top: 1px;
+    margin-bottom: 1px;
+    font-size: 18px;
+}
+
+@media only screen and (min-device-height: 320px) {
+    .slider-size {
+        height: 165px;
+    }
+}
+@media only screen and (min-device-height: 480px) {
+    .slider-size {
+        height: 175px;
+    }
+}
+@media only screen and (min-device-height: 530px) {
+    .slider-size {
+        height: 190px;
+    }
+}
+@media only screen and (min-device-height: 600px) {
+    .slider-size {
+        height: 250px;
+    }
+}
+@media only screen and (min-device-height: 600px) and (orientation:landscape) {
+    .carousel-inner > .item .slider-image {
+        border-width: 10px;
+    }
+}
+@media only screen and (min-device-height: 640px) {
+    .slider-size {
+        height: 300px;
+    }
+}
+@media only screen and (min-device-height: 720px) {
+    .slider-size {
+        height: 370px;
+    }
+    .carousel-inner > .item .slider-image {
+        border-width: 10px;
+    }
+}
+@media only screen and (min-device-height: 760px) {
+    .slider-size {
+        height: 420px;
+    }
+}
+@media only screen and (min-device-height: 800px) {
+    .slider-size {
+        height: 470px;
+    }
+    .carousel-caption h3 {
+        font-size: 22px;
+    }
+    .carousel-indicators {
+        bottom: 90%;
+    }
+}
+@media only screen and (min-device-height: 800px) and (orientation:landscape) {
+    .carousel-inner > .item .slider-image {
+        border-width: 15px;
+    }
+}
+@media only screen and (min-device-height: 900px) {
+    .slider-size {
+        height: 550px;
+    }
+}
+@media only screen and (min-device-height: 950px) {
+    .slider-size {
+        height: 600px;
+    }
+    .carousel-inner > .item .slider-image {
+        border-width: 15px;
+    }
+}
+@media only screen and (min-device-height: 1020px) {
+    .slider-size {
+        height: 650px;
+    }
+}
+@media only screen and (min-device-height: 1250px) {
+    .slider-size {
+        height: 790px;
+    }
+}
+@media only screen and (min-device-height: 1400px) {
+    body {
+        background-color: #090c06;
+    }
+    .slider-size {
+        height: 880px;
+    }
+    .carousel-caption h3 {
+        font-size: 24px;
+    }
+}
+
 
 /* popups */
 #screenPopup > .message {

@@ -1651,15 +1651,15 @@ promptTypes.select_one_slider = promptTypes.select_one.extend({
             choice.isNotToLong = "";
             if (idx === 0) {
                 choice.isFirst = true;
-                choice.color = "redFrame"
+                choice.color = "red"
             }
             if (idx === 1) {
                 choice.isSecond = true;
-                choice.color = "yellowFrame"
+                choice.color = "yellow"
             }
             if (idx === 2) {
                 choice.isThird = true;
-                choice.color = "greenFrame"
+                choice.color = "green"
             }
 
             return choice;
