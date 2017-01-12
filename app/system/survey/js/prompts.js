@@ -517,9 +517,39 @@ promptTypes.summary = promptTypes.base.extend({
 
         var summaryQuestion = [];
         var indicators = [];
+        var formDef = model.formDef;
+        var section_names = formDef.specification.section_names;
+        var promptList = [];
+        for (var j = 0; j < section_names.length; ++j) {
+            var sectionName = section_names[j];
+            var section = formDef.specification.sections[sectionName];
+            promptList.push({section_name: section.section_name, prompts: section.prompts});
+        }
+
+        function getPrompts(obj_defn) {
+            return promptList.filter(function(prompt) {
+                return prompt["section_name"] === obj_defn.section_name;
+            })[0];
+        }
+        function getPromptObj(name, promptObjs, obj_defn) {
+            return promptObjs.filter(function(obj) {
+                return obj._row_num === obj_defn._row_num && obj.name === name;
+            })[0];
+        }
+        function getPromptPoperty(field, key) {
+            return field && field[key];
+        }
+        function getSliderColor(choiceDefinition, value) {
+            return choiceDefinition.filter(function(obj) {
+                return obj.data_value === value;
+            }).map(function(obj) {
+                return obj.frame_color;
+            })[0];
+        }
         for(var name in model.data) {
             var value = model.data[name];
             var type = model.dataTableModel[name].type;
+            var obj_defn = model.dataTableModel[name]._defn[0];
             if (value && type) {
                 if (typeof value === "object") {
                     if (value.latitude && value.longitude && value.altitude) {
@@ -536,11 +566,15 @@ promptTypes.summary = promptTypes.base.extend({
                         continue;
                     }
                 }
-                else if (typeof value === "string" && value.indexOf("?") >= 0) {
-                    var index = value.lastIndexOf("?");
-                    var color = value.substring(index+1, value.length);
-                    value = value.substring(0, index);
-                    indicators.push({name: name, value: value, color: color});
+                else if (type === "string") {
+                    var promptsObjs = getPrompts(obj_defn);
+                    var promptObj = getPromptObj(name, promptsObjs.prompts, obj_defn);
+                    if (getPromptPoperty(promptObj, "type") === "select_one_slider") {
+                        var valuesList = model.dataTableModel[name].valuesList;
+                        var choiceDefinition = opendatakit.getChoicesDefinition(valuesList);
+                        var color = getSliderColor(choiceDefinition, value);
+                        indicators.push({name: name, value: value, color: color});
+                    }
                 }
                 summaryQuestion.push({name: name, value: value, type: type});
             }
@@ -549,7 +583,7 @@ promptTypes.summary = promptTypes.base.extend({
         that.renderContext.indicators = indicators;
 
         ctxt.success();
-    },
+    }
 });
 promptTypes.json = promptTypes.base.extend({
     type:"json",
@@ -1705,18 +1739,23 @@ promptTypes.select_one_slider = promptTypes.select_one.extend({
             choice.isFirst = false;
             choice.isSecond = false;
             choice.isThird = false;
-            choice.isNotToLong = "";
             if (idx === 0) {
                 choice.isFirst = true;
-                choice.color = "red"
+                if (!choice.frame_color) {
+                    choice.frame_color = "red";
+                }
             }
             if (idx === 1) {
                 choice.isSecond = true;
-                choice.color = "yellow"
+                if (!choice.frame_color) {
+                    choice.frame_color = "yellow";
+                }
             }
             if (idx === 2) {
                 choice.isThird = true;
-                choice.color = "green"
+                if (!choice.frame_color) {
+                    choice.frame_color = "green";
+                }
             }
 
             return choice;

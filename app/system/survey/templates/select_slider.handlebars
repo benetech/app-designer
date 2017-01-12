@@ -24,7 +24,7 @@
 
             {{#each choices}}
                 <div class="grid-select-item item
-                {{color}}
+                {{frame_color}}
                 {{#if checked}}
                     selected
                 {{/if}}
@@ -48,7 +48,7 @@
 
                     <div class="carousel-caption">
                         {{#if display.text}}
-                            <h3> {{{localize display.text}}}</h3>
+                            <h3>{{{localize display.text}}}</h3>
                         {{else}}
                             <h3>{{data_value}}</h3>
                         {{/if}}
