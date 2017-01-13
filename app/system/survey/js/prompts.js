@@ -733,6 +733,8 @@ promptTypes.instances = promptTypes.base.extend({
         var that = this;
         evt.stopPropagation(true);
         evt.stopImmediatePropagation();
+
+        var ctxt = that.controller.newContext(evt, that.type + ".syncSelected");
         var checkedValues = [];
         $('input:checked').each(function() {
             checkedValues.push(this.value);
