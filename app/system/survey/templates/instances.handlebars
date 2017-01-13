@@ -41,7 +41,7 @@
                     Sync selected
                 </div>
                 <div class="col-xs-4">
-                    <button type="button" class="createInstance btn btn-default instanceControlButton" tabindex="0">
+                    <button type="button" class="syncSelected btn btn-default instanceControlButton" tabindex="0">
                         <span class="glyphicon glyphicon-refresh"></span>
                     </button>
                 </div>
@@ -82,7 +82,7 @@
 											<span class="glyphicon glyphicon-remove-sign">
 										</button>
 									{{/if}}
-									<label>Sync <input type="checkbox" id="{{instance_id}}" tabindex="0" class="syncCheckbox"/></label>
+									<label>Sync <input type="checkbox" id="{{instance_id}}" tabindex="0" class="syncCheckbox" value="{{instance_id}}"/></label>
                                 {{/if}}
                                 {{#if synced}}
                                     <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default instanceControlButton" tabindex="0">

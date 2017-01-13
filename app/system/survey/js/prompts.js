@@ -615,7 +615,8 @@ promptTypes.instances = promptTypes.base.extend({
     events: {
         "click .openInstance": "openInstance",
         "click .deleteInstance": "confirmDeleteInstance",
-        "click .createInstance": "createInstance"
+        "click .createInstance": "createInstance",
+        "click .syncSelected": "syncSelected"
     },
     configureRenderContext: function(ctxt) {
         var that = this;
@@ -727,6 +728,19 @@ promptTypes.instances = promptTypes.base.extend({
             ctxt.log('D',"prompts." + that.type + ".createInstance -- prior event terminated with an error -- aborting!", "px: " + that.promptIdx);
             ctxt.failure(m);
         }}));
+    },
+    syncSelected: function(evt){
+        var that = this;
+        evt.stopPropagation(true);
+        evt.stopImmediatePropagation();
+        var checkedValues = [];
+        $('input:checked').each(function() {
+            checkedValues.push(this.value);
+        });;
+        var jsonIds = JSON.stringify(checkedValues);
+        ctxt.log('D',"prompts." + that.type + ".syncSelected", "px: " + that.promptIdx);
+
+        odkSurvey.syncSelectedForms(jsonIds);
     },
     openInstance: function(evt) {
         var that = this;
