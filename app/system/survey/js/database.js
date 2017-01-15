@@ -813,7 +813,7 @@ return {
         orderBy = '_savepoint_timestamp desc';
         if( selection === '_sync_state=?') {
             if(selectionArgs !== null){
-                args = [selectionArgs[0].substring(1,selectionArgs[0].length-1)];
+                args = [selectionArgs[0]];
             }
             return {
                     stmt : 'select * from "' + dbTableName + '" as T where (T._sync_state is null or T._sync_state = ?) and ' +

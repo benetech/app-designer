@@ -645,26 +645,27 @@ promptTypes.instances = promptTypes.base.extend({
         }
 
         // querying database through url didn't seem to work and I wasn't able to fix it, so here is the workaround
-        var url=that.$el[0].baseURI;
-        var keyValues = url.split('&').join('=').split('=');
-        if (keyValues.indexOf('_sync_state') !== -1){
-            var valueIndex = keyValues.indexOf('_sync_state') + 1;
+        var submenuPage = odkSurvey.getSubmenuPage();
+        if (submenuPage!==null){
             selection='_sync_state=?';
-            selectionArgs=[keyValues[valueIndex]];
+            selectionArgs=[submenuPage];
             //required to adjust UI depending on choosen submenu
-            switch(selectionArgs[0].substring(1,selectionArgs[0].length-1)){
+            switch(submenuPage){
                 case "new_row":
                     $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: true, send: false}});
                     break;
                 case "synced":
                     $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: true}});
                     break;
+                case "new_survey":
+                    $.extend(that.renderContext, {displayOptions: {new_survey: true, in_progress: false, send: false}});
+                    break;
                 default:
                     $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: false}});
                     break;
             }
         } else {
-            $.extend(that.renderContext, {displayOptions: {new_survey: true, in_progress: false, send: false}});
+            $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: false}});
         }
 
         // in this case, we are our own 'linked' table.
