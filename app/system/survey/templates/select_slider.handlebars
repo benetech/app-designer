@@ -9,7 +9,7 @@
         <ol class="carousel-indicators">
             {{#each choices}}
                 <li data-target="#carousel-select_one_from_many" data-slide-to="{{@index}}" class="
-                    {{#setActive ../name ../data data_value @index}}
+                    {{#setActive ../name ../data frame_color @index}}
                     active
                     {{else}}
                     {{/setActive}}
@@ -28,7 +28,7 @@
                 {{#if checked}}
                     selected
                 {{/if}}
-                {{#setActive ../name ../data data_value @index}}
+                {{#setActive ../name ../data frame_color @index}}
                     active
                 {{else}}
                 {{/setActive}}">
@@ -38,8 +38,8 @@
                             checked="checked"
                         {{/if}}
                             name="{{../name}}"
-                            id="{{data_value}}"
-                            value="{{data_value}}"
+                            id="{{frame_color}}"
+                            value="{{frame_color}}"
                             tabindex="0">
                         {{#if display.image}}
                             <div class="slider-size slider-image" style="background: url('{{formDirectory}}{{localize display.image}}') no-repeat center center; background-size: contain;"></div>

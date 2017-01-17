@@ -539,11 +539,11 @@ promptTypes.summary = promptTypes.base.extend({
         function getPromptPoperty(field, key) {
             return field && field[key];
         }
-        function getSliderColor(choiceDefinition, value) {
+        function getDataValue(choiceDefinition, value) {
             return choiceDefinition.filter(function(obj) {
-                return obj.data_value === value;
+                return obj.frame_color === value;
             }).map(function(obj) {
-                return obj.frame_color;
+                return obj.data_value;
             })[0];
         }
         for(var name in model.data) {
@@ -572,8 +572,8 @@ promptTypes.summary = promptTypes.base.extend({
                     if (getPromptPoperty(promptObj, "type") === "select_one_slider") {
                         var valuesList = model.dataTableModel[name].valuesList;
                         var choiceDefinition = opendatakit.getChoicesDefinition(valuesList);
-                        var color = getSliderColor(choiceDefinition, value);
-                        indicators.push({name: name, value: value, color: color});
+                        var data_value = getDataValue(choiceDefinition, value);
+                        indicators.push({name: name, value: value, data_value: data_value});
                     }
                 }
                 summaryQuestion.push({name: name, value: value, type: type});
@@ -1791,7 +1791,7 @@ promptTypes.select_one_slider = promptTypes.select_one.extend({
         //Check appropriate choices based on formValue
         that.renderContext.choices = _.map(filteredChoices, function(choice) {
             choice.checked = _.any(formValue, function(valueObject) {
-                return choice.data_value === valueObject.value;
+                return choice.frame_color === valueObject.value;
             });
             return choice;
         });

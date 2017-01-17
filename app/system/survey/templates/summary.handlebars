@@ -23,10 +23,10 @@
         <div>
             <p>Dimension A</p>
             {{#each indicators}}
-                {{#if this.color}}
+                {{#if this.value}}
                     <span class="glyphicon glyphicon-one-fine-dot"
                         style="color:
-                        {{this.color}}">{{this.name}}: {{this.value}}
+                        {{this.value}}">{{this.name}}: {{this.data_value}}
                     </span>
                 {{/if}}
             {{/each}}
