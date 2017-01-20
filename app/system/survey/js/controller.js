@@ -23,6 +23,7 @@ return {
     moveFailureMessage: { message: "Internal Error: Unable to determine next prompt." },
     screenManager : null,
     readOnly: null,
+    isSummaryAtFirstScreen: false,
     viewFirstQueuedAction: function() {
         var action = odkCommon.viewFirstQueuedAction();
         if ( action === undefined ) return null;
@@ -881,6 +882,17 @@ return {
         ctxt.log('D','controller.gotoNextScreen');
         var opPath = that.getCurrentScreenPath();
 
+        if (that.isSummaryAtFirstScreen) {
+            var formDef = opendatakit.getCurrentFormDef();
+            for (var i = 0; i < formDef.specification.sections.initial.prompts.length; i++) {
+                if (formDef.specification.sections.initial.prompts[i]._type === "opening") {
+                    opPath = formDef.specification.sections.initial.prompts[i]._branch_label_enclosing_screen;
+                    break;
+                }
+            }
+            that.isSummaryAtFirstScreen = false;
+        }
+
         var failureObject = that.beforeMove(true, true);
         if ( failureObject !== null && failureObject !== undefined ) {
             ctxt.log('I',"gotoNextScreen.beforeMove.failure", "px: " +  opPath);
@@ -1023,6 +1035,17 @@ return {
     startAtScreenPath:function(ctxt, path) {
         var that = this;
         ctxt.log('D','controller.startAtScreenPath');
+
+        if (that.readOnly) {
+            var formDef = opendatakit.getCurrentFormDef();
+            for (var i = 0; i < formDef.specification.sections.initial.prompts.length; i++) {
+                if (formDef.specification.sections.initial.prompts[i]._type === "summary") {
+                    path = formDef.specification.sections.initial.prompts[i]._branch_label_enclosing_screen;
+                    that.isSummaryAtFirstScreen = true;
+                    break;
+                }
+            }
+        }
 
         if ( path === null || path === undefined ) {
             path = opendatakit.initialScreenPath;
