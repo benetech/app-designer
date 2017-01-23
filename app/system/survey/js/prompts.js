@@ -644,7 +644,6 @@ promptTypes.instances = promptTypes.base.extend({
             selectionArgs = queryDefn.selectionArgs();
             orderBy = that.convertOrderBy(model);
         }
-        $.extend(that.renderContext, {test: JSON.stringify(that.renderContext.instances, null, 2)});
 
         // querying database through url didn't seem to work and I wasn't able to fix it, so here is the workaround
         var submenuPage = odkSurvey.getSubmenuPage();
