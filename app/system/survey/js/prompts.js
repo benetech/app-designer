@@ -750,11 +750,12 @@ promptTypes.instances = promptTypes.base.extend({
         var that = this;
         evt.stopPropagation(true);
         evt.stopImmediatePropagation();
-        var instanceIdToOpen = $(evt.currentTarget).attr('id');
 
-        var isReadOnly = that.renderContext.instances.find(function( obj ) {
-            return obj.instance_id === instanceIdToOpen;
-        }).synced;
+        var instanceIdToOpen = $(evt.currentTarget).attr('id');
+        var isReadOnly = false;
+        that.renderContext.instances.forEach(function(entry){
+            if(entry.instance_id === instanceIdToOpen && entry.synced)
+            isReadOnly = true;});
 
         if ( instanceIdToOpen !== null && instanceIdToOpen !== undefined ) {
             var ctxt = that.controller.newContext(evt, that.type + ".openInstance");
