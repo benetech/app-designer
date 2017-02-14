@@ -52,6 +52,15 @@ body {
     display: flex;
 }
 
+.mediaContainer video {
+    max-width: 100%;
+    max-height: 70%;
+}
+@media only screen and (orientation:landscape) {
+    .mediaContainer video {
+        max-height: 250px;
+    }
+}
 /* sliders*/
 
 input[type="range"] {
@@ -775,7 +784,7 @@ Eventually we should make a jqm theme for this.
     position: relative;
     content:"\25cf";
     font-size: 10em;
-    margin-top: -0.5em;
+    margin-top: -0.3em;
     padding-left: 15px;
 }
 
