@@ -511,10 +511,6 @@ promptTypes.summary = promptTypes.base.extend({
             that.renderContext.display_field = ts.toISOString();
         }
 
-        if (that._screen && that._screen._renderContext) {
-            that._screen._renderContext.enableForwardNavigation = false;
-        }
-
         var summaryQuestion = [];
         var indicators = [];
         var formDef = model.formDef;
