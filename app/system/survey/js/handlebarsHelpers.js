@@ -73,6 +73,14 @@ Handlebars.registerHelper('setActive', function(name, context, value, index, opt
     }
 });
 
+Handlebars.registerHelper('showElement', function(val1, val2, options) {
+    if (val1 || val2) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
 //Where does this get used?
 Handlebars.registerHelper('formDirectory', function(options) {
     return opendatakit.getCurrentFormPath();
