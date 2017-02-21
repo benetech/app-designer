@@ -539,6 +539,8 @@ Eventually we should make a jqm theme for this.
 .syncCheckbox {
   width: inherit;
   float: right;
+  margin: 15pt 10pt 10pt 0pt !important;
+  transform: scale(3,3);
 }
 /**
  * Datetimepicker for Bootstrap v3 - Modified
