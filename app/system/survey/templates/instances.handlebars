@@ -15,7 +15,7 @@
         <hr>
     </div>
 
-    {{#if displayOptions.new_survey}}
+    {{#showElement displayOptions.new_survey displayOptions.is_designer}}
     <div>
         <fieldset class="instanceNew">
             <div class="row">
@@ -30,9 +30,9 @@
             </div>
         </fieldset>
     </div>
-    {{/if}}
+    {{/showElement}}
 
-    {{#if displayOptions.in_progress}}
+    {{#showElement displayOptions.in_progress false}}
     <div>
         <fieldset class="instanceNew">
             <div class="row">
@@ -48,7 +48,7 @@
         </fieldset>
     </div>
     <hr>
-    {{/if}}
+    {{/showElement}}
 
     {{#unless displayOptions.new_survey}}
     <p>Previously created instances:</p>
@@ -74,18 +74,18 @@
                                 <div class="instanceRowControl btn-group">
                                 {{#if new_row}}
                                     <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default instanceControlButton" tabindex="0">
-                                        <span class="glyphicon glyphicon-pencil">
+                                        <span class="glyphicon glyphicon-pencil"></span>
                                     </button>
 									{{#if show_delete}}
 										<button type="button" id="{{instance_id}}" display_value="{{display_field}}" class="odk deleteInstance btn btn-default instanceControlButton" tabindex="0">
-											<span class="glyphicon glyphicon-remove-sign">
+											<span class="glyphicon glyphicon-remove-sign"></span>
 										</button>
 									{{/if}}
 									<label>Sync <input type="checkbox" id="{{instance_id}}" tabindex="0" class="syncCheckbox" value="{{instance_id}}"/></label>
                                 {{/if}}
                                 {{#if synced}}
                                     <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default instanceControlButton" tabindex="0">
-                                        <span class="glyphicon glyphicon-eye-open">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
                                     </button>
                                 {{/if}}
                                 </div>

@@ -642,62 +642,119 @@ promptTypes.instances = promptTypes.base.extend({
         }
 
         // querying database through url didn't seem to work and I wasn't able to fix it, so here is the workaround
-        var submenuPage = odkSurvey.getSubmenuPage();
-        if (submenuPage!==null){
-            selection='_sync_state=?';
-            selectionArgs=[submenuPage];
-            //required to adjust UI depending on choosen submenu
-            switch(submenuPage){
-                case "new_row":
-                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: true, send: false}});
-                    break;
-                case "synced":
-                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: true}});
-                    break;
-                case "new_survey":
-                    $.extend(that.renderContext, {displayOptions: {new_survey: true, in_progress: false, send: false}});
-                    break;
-                default:
-                    $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: false}});
-                    break;
+        if (odkSurvey && typeof odkSurvey.getSubmenuPage === 'function') {
+            var submenuPage = odkSurvey.getSubmenuPage();
+            if (submenuPage !== null) {
+                selection = '_sync_state=?';
+                selectionArgs = [submenuPage];
+                //required to adjust UI depending on choosen submenu
+                switch (submenuPage) {
+                    case "new_row":
+                        $.extend(that.renderContext, {
+                            displayOptions: {
+                                new_survey: false,
+                                in_progress: true,
+                                send: false,
+                                is_designer: false
+                            }
+                        });
+                        break;
+                    case "synced":
+                        $.extend(that.renderContext, {
+                            displayOptions: {
+                                new_survey: false,
+                                in_progress: false,
+                                send: true,
+                                is_designer: false
+                            }
+                        });
+                        break;
+                    case "new_survey":
+                        $.extend(that.renderContext, {
+                            displayOptions: {
+                                new_survey: true,
+                                in_progress: false,
+                                send: false,
+                                is_designer: false
+                            }
+                        });
+                        break;
+                    default:
+                        $.extend(that.renderContext, {
+                            displayOptions: {
+                                new_survey: false,
+                                in_progress: false,
+                                send: false,
+                                is_designer: false
+                            }
+                        });
+                        break;
+                }
+            } else {
+                $.extend(that.renderContext, {
+                    displayOptions: {
+                        new_survey: false,
+                        in_progress: false,
+                        send: false,
+                        is_designer: false
+                    }
+                });
             }
         } else {
-            $.extend(that.renderContext, {displayOptions: {new_survey: false, in_progress: false, send: false}});
+            //else if rendering through the app designer
+            $.extend(that.renderContext, {
+                displayOptions: {
+                    new_survey: false,
+                    in_progress: false,
+                    send: false,
+                    is_designer: true
+                }
+            });
         }
 
         // in this case, we are our own 'linked' table.
         database.get_linked_instances($.extend({},ctxt,{success:function(instanceList) {
                 that.renderContext.instances = _.map(instanceList, function(term) {
                     var savepoint_type = term.savepoint_type;
-                    if ( savepoint_type === opendatakit.savepoint_type_complete ) {
+                    if (savepoint_type === opendatakit.savepoint_type_complete) {
                         term.savepoint_type_text = that.savepoint_type_finalized_text;
-						term.is_checkpoint = false;
-                    } else if ( savepoint_type === opendatakit.savepoint_type_incomplete ) {
+                        term.is_checkpoint = false;
+                    } else if (savepoint_type === opendatakit.savepoint_type_incomplete) {
                         term.savepoint_type_text = that.savepoint_type_incomplete_text;
-						term.is_checkpoint = false;
+                        term.is_checkpoint = false;
                     } else {
                         term.savepoint_type_text = that.savepoint_type_checkpoint_text;
-						term.is_checkpoint = true;
+                        term.is_checkpoint = true;
                     }
-					// this field is undefined if rendering through the app designer
-					var effective_access = term.effective_access;
-					if ( effective_access === "rwd" || effective_access === undefined ) {
-						term.show_delete = true;
-					} else {
+
+                    function setTermView() {
+                        var sync_state = term.sync_state;
+                        if (sync_state === "synced") {
+                            term.synced = true;
+                        } else {
+                            term.synced = false;
+                        }
+                        if (sync_state === "new_row") {
+                            term.new_row = true;
+                        } else {
+                            term.new_row = false;
+                        }
+                    }
+
+                    // this field is undefined if rendering through the app designer
+                    var effective_access = term.effective_access;
+                    if (effective_access === undefined) {
+                        term.show_delete = true;
+                        term.synced = false;
+                        term.new_row = true;
+                    } else if (effective_access === "rwd") {
+                        term.show_delete = true;
+                        setTermView();
+                    } else {
 						term.show_delete = false;
+                        setTermView();
 					}
 
-					var sync_state = term.sync_state;
-					if(sync_state === "synced"){
-					    term.synced = true;
-					} else {
-					    term.synced = false;
-					}
-					if(sync_state === "new_row"){
-                        term.new_row = true;
-                    } else {
-                        term.new_row = false;
-                    }
                     return term;
                 });
 
