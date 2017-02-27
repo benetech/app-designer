@@ -537,9 +537,12 @@ Eventually we should make a jqm theme for this.
 }
 
 .syncCheckbox {
+    line-height: 2.8em;
+    font-weight: 700;
+}
+.syncCheckbox input {
   width: inherit;
-  float: right;
-  margin: 15pt 10pt 10pt 0pt !important;
+  margin: 1em 1em 1em 0 !important;
   transform: scale(3,3);
 }
 /**
