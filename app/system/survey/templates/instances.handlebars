@@ -67,24 +67,27 @@
                                 <p>{{savepoint_timestamp}}</p>
 								<p><strong>{{savepoint_type_text}}</strong></p>
 								{{#if is_checkpoint}}
-									<span class="glyphicon glyphicon-warning-sign"></span></p>
+									<p><span class="glyphicon glyphicon-warning-sign"></span></p>
 								{{/if}}
                             </div>
                             <div class="col-xs-4">
-                                <div class="instanceRowControl btn-group">
+                                <div class="instanceRowControl">
                                 {{#if new_row}}
-                                    <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default instanceControlButton" tabindex="0">
+                                    <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default btn-lg" tabindex="0">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </button>
-									{{#if show_delete}}
-										<button type="button" id="{{instance_id}}" display_value="{{display_field}}" class="odk deleteInstance btn btn-default instanceControlButton" tabindex="0">
-											<span class="glyphicon glyphicon-remove-sign"></span>
-										</button>
-									{{/if}}
-									<label class="checkbox-inline syncCheckbox">Sync <input type="checkbox" id="{{instance_id}}" tabindex="0" value="{{instance_id}}"></label>
+                                {{#if show_delete}}
+                                    <button type="button" id="{{instance_id}}" value="{{display_field}}" class="odk deleteInstance btn btn-default btn-lg" tabindex="0">
+                                        <span class="glyphicon glyphicon-remove-sign"></span>
+                                    </button>
+                                {{/if}}
+                                <label class="btn btn-default btn-lg" style="width: 100%;">
+                                        <input type="checkbox" id="{{instance_id}}" class="col-xs-2" style="transform: scale(2); -webkit-transform: scale(1.5);" value="{{instance_id}}" tabindex="0">
+                                        Sync
+                                </label>
                                 {{/if}}
                                 {{#if synced}}
-                                    <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default instanceControlButton" tabindex="0">
+                                    <button type="button" id="{{instance_id}}" class="odk openInstance btn btn-default btn-lg" tabindex="0">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </button>
                                 {{/if}}
