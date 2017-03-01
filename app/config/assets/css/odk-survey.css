@@ -536,15 +536,6 @@ Eventually we should make a jqm theme for this.
   clear: both;
 }
 
-.syncCheckbox {
-    line-height: 2.8em;
-    font-weight: 700;
-}
-.syncCheckbox input {
-  width: inherit;
-  margin: 1em 1em 1em 0 !important;
-  transform: scale(3,3);
-}
 /**
  * Datetimepicker for Bootstrap v3 - Modified
  * https://github.com/Eonasdan/bootstrap-datetimepicker/
