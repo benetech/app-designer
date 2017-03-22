@@ -470,6 +470,19 @@ return {
             return;
         }
 
+        //if the table has a subform, we need to write it to our local table
+        var form_uuid = instanceId;
+        var keys = Object.keys(model.data);
+        var column;
+        var value;
+        for (var i = 0; i < keys.length; i++) {
+            if ( JSON.stringify(keys[i]).substring(1,5) === "sub_") { //if any column name contains sub_ then it is a subform
+                column = Object.keys(model.data)[i];
+                value = model.data[Object.keys(model.data)[i]] //this has to be changed
+            }
+        }
+        odkSurvey.saveFormSubformPair(form_uuid, value, column); //call our javascript interface to pass values and put them to database
+
         if ( asComplete ) {
             odkData.saveCheckpointAsComplete(model.table_id, simpleMap, instanceId,
                 function(reqData) {
