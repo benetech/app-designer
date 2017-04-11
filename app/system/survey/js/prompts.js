@@ -794,10 +794,17 @@ promptTypes.instances = promptTypes.base.extend({
         $('input:checked').each(function() {
             checkedValues.push(this.value);
         });;
-        var jsonIds = JSON.stringify(checkedValues);
-        ctxt.log('D',"prompts." + that.type + ".syncSelected", "px: " + that.promptIdx);
+        if (that.renderContext != null && that.renderContext.instances.length != 0) {
+            // Pass a form ID and IDs of the selected instances from that form
+            var instancesToSyncMap = {};
+            var formId = that.renderContext.instances[0].form_id;
+            instancesToSyncMap[formId] = checkedValues;
+            var jsonIds = JSON.stringify(instancesToSyncMap);
 
-        odkSurvey.syncSelectedForms(jsonIds);
+            ctxt.log('D',"prompts." + that.type + ".syncSelected", "px: " + that.promptIdx);
+
+            odkSurvey.syncSelectedForms(jsonIds);
+        }
     },
     openInstance: function(evt) {
         var that = this;
