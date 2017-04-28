@@ -499,6 +499,7 @@ return {
      */
     _innerSaveAllChanges: function(ctxt, op, path, simodel, siformId, siinstanceId, complete) {
         var that = this;
+        // TODO: should update form-subform table
         database.save_all_changes($.extend({},ctxt,{success:function() {
                 that.screenManager.hideSpinnerOverlay();
                 odkSurvey.saveAllChangesCompleted( opendatakit.getRefId(), opendatakit.getCurrentInstanceId(), complete);
@@ -1097,7 +1098,7 @@ return {
         var that = this;
         var model = opendatakit.getCurrentModel();
         var formId = opendatakit.getSettingValue('form_id');
-        var instanceId = opendatakit.getCurrentInstanceId();
+        // TODO: should update form-subform table?
         database.save_all_changes($.extend({},ctxt,{success:function() {
                 odkSurvey.saveAllChangesCompleted( opendatakit.getRefId(), instanceId, false);
                 ctxt.success();
@@ -1267,6 +1268,14 @@ return {
         // Set viewing mode to read-only if the readOnly parameter is equal to true. If it is not, then the viewing
         // mode is going to be the default one which enables editing the survey content.
         that.readOnly = isReadOnly;
+
+        // Save main information about the parent form. It will be used when creating realtions between the parent
+        // form and subforms which are included within it and should be synced with the server alongside with the
+        // parent form.
+        odkSurvey.setMainFormData(id, opendatakit.getSettingValue('form_id'), opendatakit.getCurrentTableId());
+
+//        var mainFormDataJson = odkSurvey.getMainFormData();
+//        console.log("mainFormDataJson: " + mainFormDataJson);
 
         // NOTE: if the openInstance call failed, we should popup the error from that...
         database.applyDeferredChanges($.extend({},ctxt,{success:function() {

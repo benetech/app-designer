@@ -470,6 +470,9 @@ return {
             return;
         }
 
+        // TODO: should update form-subform table
+        console.log("Saving form_id: " + opendatakit.getSettingValue('form_id'));
+
         if ( asComplete ) {
             odkData.saveCheckpointAsComplete(model.table_id, simpleMap, instanceId,
                 function(reqData) {

@@ -117,7 +117,7 @@ return {
     },
 
     /**
-     * Encode the data value 
+     * Encode the data value
      */
     encodeURIValue:function(value) {
         return encodeURIComponent(JSON.stringify(value));
