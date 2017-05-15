@@ -539,6 +539,9 @@ return {
                                 if (reqData.getCount() !== 0 && reqData.getData(0,'_sync_state') !== 'deleted' ) {
                                     ctxt.failure({message: "unable to delete row!"});
                                 } else {
+                                    // Remove rows in form-subform pairs table which holds relations in which
+                                    // one of the sides was the deleted instance.
+                                    odkSurvey.deleteOutdatedInstancesFromFormSubFormTable(instanceId);
                                     ctxt.success();
                                 }
                             },

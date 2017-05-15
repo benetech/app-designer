@@ -502,7 +502,7 @@ return {
         // TODO: should update form-subform table
         database.save_all_changes($.extend({},ctxt,{success:function() {
                 that.screenManager.hideSpinnerOverlay();
-                odkSurvey.saveAllChangesCompleted( opendatakit.getRefId(), opendatakit.getCurrentInstanceId(), complete);
+                odkSurvey.saveAllChangesCompleted(opendatakit.getRefId(), opendatakit.getCurrentTableId(), opendatakit.getCurrentInstanceId(), complete);
                 // the odkSurvey should terminate the window... if not, at least leave the instance.
                 that.leaveInstance(ctxt);
             },
@@ -1070,7 +1070,7 @@ return {
      * Failure: we were unable to delete the records.
      */
     ignoreAllChanges:function(ctxt) {
-         var model = opendatakit.getCurrentModel();
+        var model = opendatakit.getCurrentModel();
         var formId = opendatakit.getSettingValue('form_id');
         var instanceId = opendatakit.getCurrentInstanceId();
         database.ignore_all_changes($.extend({},ctxt,{success:function() {
@@ -1100,7 +1100,7 @@ return {
         var formId = opendatakit.getSettingValue('form_id');
         // TODO: should update form-subform table?
         database.save_all_changes($.extend({},ctxt,{success:function() {
-                odkSurvey.saveAllChangesCompleted( opendatakit.getRefId(), instanceId, false);
+                odkSurvey.saveAllChangesCompleted( opendatakit.getRefId(), formId, instanceId, false);
                 ctxt.success();
             },
             failure:function(m) {
@@ -1269,10 +1269,10 @@ return {
         // mode is going to be the default one which enables editing the survey content.
         that.readOnly = isReadOnly;
 
-        // Save main information about the parent form. It will be used when creating realtions between the parent
+        // Save main information about the parent form. It will be used when creating relations between the parent
         // form and subforms which are included within it and should be synced with the server alongside with the
         // parent form.
-        odkSurvey.setMainFormData(id, opendatakit.getSettingValue('form_id'), opendatakit.getCurrentTableId());
+        odkSurvey.setMainFormData(id, opendatakit.getCurrentTableId());
 
 //        var mainFormDataJson = odkSurvey.getMainFormData();
 //        console.log("mainFormDataJson: " + mainFormDataJson);
