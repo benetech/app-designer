@@ -1803,6 +1803,10 @@ promptTypes.select_one_grid = promptTypes.select_one.extend({
     }
 });
 promptTypes.select_one_slider = promptTypes.select_one.extend({
+    renderContext: {
+        "portrait": (window.orientation === 0 ||  window.orientation === 180),
+        "chosen": false
+    },
     templatePath: "templates/select_slider.handlebars",
     updateRenderValue: function(formValue) {
         var that = this;
@@ -1812,7 +1816,6 @@ promptTypes.select_one_slider = promptTypes.select_one.extend({
                 return that.choice_filter(choice);
             }
         });
-
         filteredChoices = _.map(filteredChoices, function(choice, idx) {
             choice.id = idx;
             choice.isFirst = false;
@@ -1836,12 +1839,12 @@ promptTypes.select_one_slider = promptTypes.select_one.extend({
                     choice.frame_color = "green";
                 }
             }
-
             return choice;
         });
 
         if ( !formValue ) {
             that.renderContext.choices = _.map(filteredChoices, function(choice) {
+                that.renderContext.chosen = false;
                 choice.checked = false;
                 return choice;
             });
@@ -1853,6 +1856,7 @@ promptTypes.select_one_slider = promptTypes.select_one.extend({
         //Check appropriate choices based on formValue
         that.renderContext.choices = _.map(filteredChoices, function(choice) {
             choice.checked = _.any(formValue, function(valueObject) {
+                that.renderContext.chosen = choice.frame_color;
                 return choice.frame_color === valueObject.value;
             });
             return choice;
