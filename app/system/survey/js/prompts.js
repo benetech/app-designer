@@ -84,6 +84,9 @@ promptTypes.base = Backbone.View.extend({
      */
     _whenTemplateIsReady: function(ctxt){
         var that = this;
+        if(odkSurvey.getSubmenuPage() === "synced") {
+            that.controller.readOnly = true;
+        }
         if(that.template) {
             ctxt.success();
             that._blockAllInputs(that.controller.readOnly);
