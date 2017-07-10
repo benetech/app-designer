@@ -299,8 +299,7 @@ return {
                         // If we go backward, we will silently
                         // clear this record out and move to the
                         // screen before the do section.
-                        odkSurvey.pushSectionScreenState(opendatakit.getRefId());
-                        path = that.getCurrentContentsScreenPath();
+                        path = odkSurvey.popScreenHistory(opendatakit.getRefId());
                         state = '';
                         repop = true;
                         break;
