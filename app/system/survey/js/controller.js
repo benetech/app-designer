@@ -370,11 +370,13 @@ return {
         var path = null;
         var state = '';
         var combo;
+        var forceFlow = false;
         if ( action === null || action === undefined ) {
             action = op._token_type;
         }
         for (;;) {
             path = op._section_name + "/" + op.operationIdx;
+            forceFlow = false;
             ctxt.log('I','controller._doActionAtLoop: path: ' + path + ' action: ' + action);
             try {
                 switch ( action ) {
@@ -399,23 +401,18 @@ return {
                     path = that.getNextOperationPath(path);
                     break;
                 case "advance":
-                    state = odkSurvey.getControllerState(opendatakit.getRefId());
-                    if ( state !== 'popHistoryOnExit' ) {
-                        path = that.getNextOperationPath(path);
-                        break;
-                    }
+                    forceFlow = true;
+                    //state = odkSurvey.getControllerState(opendatakit.getRefId());
+                    path = odkSurvey.getNextScreenPath(that.getCurrentScreenPath());
+                    break;
                     // otherwise drop through...
                 case "back_in_history":
+                    forceFlow = true;
                     // pop the history stack, and render that screen.
-                    combo = that.findPreviousScreenAndState(false);
-                    path = combo.path;
-                    state = combo.state;
-
+                    path = odkSurvey.getPreviousScreenPath(that.getCurrentScreenPath());//combo.path;
                     if ( path === null || path === undefined ) {
                         path = opendatakit.initialScreenPath;
                     }
-                    // just for debugging...
-                    odkSurvey.getScreenPath(opendatakit.getRefId());
                     break;
                 case "resume":
                     // pop the history stack, and render the next screen.
@@ -474,9 +471,20 @@ return {
 
                 //
                 // advance to the 'op' specified by the path.
+
+
                 if ( path !== null &&  path !== undefined ) {
                     op = that.getOperation(path);
-                    action = op._token_type;
+                     if(forceFlow) {
+                        if(path == "survey/0") {
+                          action = 'save_and_terminate';
+                        }
+                        else {
+                          action = 'begin_screen';
+                        }
+                      } else {
+                        action = op._token_type;
+                      }
                 } else {
                     odkCommon.log('E',"controller._doActionAtLoop.failure px: " + path);
                     ctxt.failure(that.moveFailureMessage);
