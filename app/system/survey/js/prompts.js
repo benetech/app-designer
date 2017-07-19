@@ -1963,6 +1963,18 @@ promptTypes.input_type = promptTypes.base.extend({
     loseFocus: function(evt) {
         var that = this;
         odkCommon.log('D',"prompts." + that.type + ".focusout px: " + that.promptIdx);
+
+        if (that.modified === true) {
+            var ctxt = that.controller.newContext(evt, that.type + ".loseFocus");
+            that.controller.enqueueTriggeringContext($.extend({},ctxt,{success:function() {
+                ctxt.log('D',"prompts." + that.type + ".loseFocus: reRender", "px: " + that.promptIdx);
+                that.reRender(ctxt);
+            },
+            failure:function(m) {
+                ctxt.log('D',"prompts." + that.type + ".loseFocus -- prior event terminated with an error -- aborting!", "px: " + that.promptIdx);
+                ctxt.failure(m);
+            }}));
+        }
     },
     gainFocus: function(evt) {
         var that = this;
