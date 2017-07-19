@@ -76,6 +76,7 @@ return {
             if ( !odkSurvey.hasSectionStack(refId) ) {
                 odkSurvey.clearSectionScreenState(refId);
             }
+            that.controller.setLocale(ctxt, odkSurvey.getLocale());
             that.controller.startAtScreenPath(ctxt, screenPath);
         }}), model, formId, instanceId, sameInstance, instanceMetadataKeyValueMap);
     },
