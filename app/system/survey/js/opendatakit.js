@@ -530,6 +530,12 @@ return {
         var shortDate = (date.getMonth() + 1) + "/" + date.getDate()  + "/" + date.getFullYear();
 
         return shortDate;
+    },
+
+    getProgressPage:function(path) {
+        var currentPage = odkSurvey.getCurrentPage(path);
+        var pagesAmount = odkSurvey.getPagesAmount();
+        return currentPage + '/' + pagesAmount;
     }
 };
 });

@@ -205,9 +205,14 @@ return Backbone.View.extend({
         }
         var locales = opendatakit.getFormLocalesValue();
         // useful defaults...
+        var operationIdx = "";
+        if(screen._operation != null) {
+            operationIdx = screen._operation.operationIdx;
+        }
         that.renderContext = {
             form_version: opendatakit.getSettingValue('form_version'),
             form_title: opendatakit.getCurrentSectionTitle(screen._section_name),
+            page_progress: opendatakit.getProgressPage(screen._section_name + '/' + operationIdx),
             locales: locales,
             dataTheme: "a",
             hasTranslations: (locales.length > 1),

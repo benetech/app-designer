@@ -166,9 +166,6 @@ input[type="range"]::-webkit-slider-thumb:before {
     margin-right:0;
     z-index: 10000;
 }
-.odk-options-btn {
-    width:100%;
-}
 .odk-header-back-btn {
     padding-left: 0;
     padding-right: 7px;
