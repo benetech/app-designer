@@ -881,18 +881,12 @@ Eventually we should make a jqm theme for this.
     padding: 0;
 }
 
-/* Summary view */
 .glyphicon-one-fine-dot:before {
     display: block;
-    position: relative;
     content:"\25cf";
     font-size: 10em;
     margin-top: -0.3em;
     padding-left: 15px;
-}
-
-.summary-indicator {
-    padding-left: 15px;;
 }
 
 /* Customized Button */

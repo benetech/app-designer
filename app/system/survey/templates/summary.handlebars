@@ -21,14 +21,13 @@
     <hr/>
     {{#if indicators}}
         <div>
-            <h3>Dimension A</h3>
+            <p>Dimension A</p>
             {{#each indicators}}
                 {{#if this.value}}
                     <span class="glyphicon glyphicon-one-fine-dot"
                         style="color:
-                        {{this.value}}">
+                        {{this.value}}">{{this.name}}: {{this.data_value}}
                     </span>
-                    <p class="summary-indicator">{{this.name}}: {{this.data_value}}</p>
                 {{/if}}
             {{/each}}
         </div>
