@@ -496,24 +496,7 @@ return Backbone.View.extend({
         }}));
     },
     openOptions: function(evt) {
-        var that = this;
-        var $contentArea = $('#optionsPopup');
-        $contentArea.empty().remove();
-        if ( that.activeScreen === null || that.activeScreen === undefined ) {
-            evt.stopPropagation();
-            evt.stopImmediatePropagation();
-            return;
-        }
-        var rc = (that.activeScreen && that.activeScreen._renderContext) ?
-            that.activeScreen._renderContext : that.renderContext;
-
-        // add information to the view (optionsPopup.handlebars) about the display mode
-        rc.readOnly = that.controller.readOnly;
-
-        that.activeScreen.$el.append(that.optionsTemplate(rc)).trigger('pagecreate');
-        //$('#optionsPopup').enhanceWithin().popup();
-        //$( "#optionsPopup" ).popup( "open" );
-        $( "#optionsPopup" ).modal();
+        odkSurvey.saveAllAsCompleteThenPopBackStack();
     },
     openLanguagePopup: function(evt) {
         var that = this;

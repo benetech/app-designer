@@ -1,31 +1,28 @@
 <div class="odk-screen{{#unless disableSwipeNavigation}}{{#if enableNavigation}}{{#if enableForwardNavigation}} swipeForwardEnabled{{/if}}{{#if enableBackNavigation}} swipeBackEnabled{{/if}}{{/if}}{{/unless}}" >
     {{#if showHeader}}
-        <div style="display: table;">
-
-                    <div style="display: table-cell; width:15vw; text-align: left;">
-                        <button type="button" class="odk-options-btn btn btn-default btn-lg" data-toggle="modal" data-target="#myModal">
-                            <span><-</span>
-                        </button>
-                    </div>
-
-                    <div style="display: table-cell; width:70vw; text-align: center;">
-                        {{localize form_title}}
-                    </div>
-                    <div style="display: table-cell; width:15vw; ">
-                    </div>
-                </div>
-                       <div style="display: table;">
-                    <div style="display: table-cell; width:33.33vw; text-align: center;">
-                        <a class="odk-prev-btn btn">  prev</a>
-                    </div>
-
-                    <div style="display: table-cell; width:33.33vw; text-align: center;">
-                        {{page_progress}}
-                    </div>
-                    <div style="display: table-cell; width:33.33vw; text-align: center;">
-                        <a class="odk-next-btn btn"> next </a>
-                    </div>
-                </div>
+        <div class="odk-nav-table-top">
+            <div class="odk-nav-exit-button">
+                <a class="odk-options-btn odk-nav-btn btn" data-toggle="modal" data-target="#myModal">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+            </div>
+            <div class="odk-nav-form-title">
+                {{localize form_title}}
+            </div>
+            <div class="odk-nav-exit-button">
+            </div>
+        </div>
+        <div class="odk-nav-table-bottom">
+            <div class="odk-nav-prev-button">
+                <a class="odk-prev-btn odk-nav-btn btn">  PREV</a>
+            </div>
+            <div class="odk-nav-page-progress">
+                {{page_progress}}
+            </div>
+            <div class="odk-nav-next-button">
+                <a class="odk-next-btn odk-nav-btn btn"> NEXT </a>
+            </div>
+        </div>
 
     {{/if}}
     <div class="odk-scroll"><div class="odk-container container"></div>
