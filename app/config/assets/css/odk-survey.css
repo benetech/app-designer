@@ -937,51 +937,48 @@ Eventually we should make a jqm theme for this.
 .odk-nav-table-top {
     display: table;
     background-color: #F2F2F2;
-    padding-top:10px;
-    padding-bottom:10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     box-shadow: 0px 3px 0px #B1B1B1;
 }
 
-.odk-nav-table-bottom {  //TODO: squash padding into one
+.odk-nav-table-bottom {
     display: table;
     background-color: #E2E2E2;
-    padding-top:10px;
-    padding-bottom:10px;
-    padding-left:10px;
-    padding-right:10px;
-    margin-bottom:20px;
-    margin-top:3px;
+    padding-top: 10px 10px 10px 10px;
+    margin-bottom: 20px;
+    margin-top: 3px;
 }
 
 .odk-nav-exit-button {
     display: table-cell;
-    width:15vw;
+    width: 15vw;
     text-align: left;
 }
 
 .odk-nav-form-title {
     display: table-cell;
-    width:70vw;
+    width: 70vw;
     text-align: center;
-    font-weight:bold;
+    font-weight: bold;
     font-size: 110%;
 }
 
 .odk-nav-prev-button {
     display: table-cell;
-    width:33.33vw;
+    width: 33.33vw;
     text-align: left;
 }
 
 .odk-nav-next-button {
     display: table-cell;
-    width:33.33vw;
+    width: 33.33vw;
     text-align: right;
 }
 
 .odk-nav-page-progress {
     display: table-cell;
-    width:33.33vw;
+    width: 33.33vw;
     text-align: center;
     font-weight: bold;
     font-size: 125%;
