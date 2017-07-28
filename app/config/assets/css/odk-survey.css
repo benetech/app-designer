@@ -936,6 +936,7 @@ Eventually we should make a jqm theme for this.
 
 .odk-nav-table-top {
     display: table;
+    width: 100%;
     background-color: #F2F2F2;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -944,6 +945,7 @@ Eventually we should make a jqm theme for this.
 
 .odk-nav-table-bottom {
     display: table;
+    width: 100%;
     background-color: #E2E2E2;
     padding-top: 10px 10px 10px 10px;
     margin-bottom: 20px;
