@@ -1,5 +1,5 @@
 /**
- * The that.getOdkDataIf() injected interface will be used in conjunction with this class to 
+ * The that.getOdkDataIf() injected interface will be used in conjunction with this class to
  * create closures for callback functions to be invoked once a response is available
  * from the Java side.
  */
@@ -11,7 +11,7 @@ window.odkData = {
 //     _tableKVSCacheMap: [],
     _transactionId: 0,
     _callbackId: 0,
-    
+
     getOdkDataIf: function() {
         return window.odkDataIf;
     },
@@ -29,7 +29,7 @@ window.odkData = {
 
     getRoles: function(successCallbackFn, failureCallbackFn) {
         var that = this;
-        
+
         var req = that.queueRequest('getRoles', successCallbackFn, failureCallbackFn);
         console.log('getRoles cbId=' + req._callbackId);
 
@@ -38,7 +38,7 @@ window.odkData = {
 
     getUsers: function(successCallbackFn, failureCallbackFn) {
         var that = this;
-        
+
         var req = that.queueRequest('getUsers', successCallbackFn, failureCallbackFn);
         console.log('getUsers cbId=' + req._callbackId);
 
@@ -47,7 +47,7 @@ window.odkData = {
 
     getAllTableIds: function(successCallbackFn, failureCallbackFn) {
         var that = this;
-        
+
         var req = that.queueRequest('getAllTableIds', successCallbackFn, failureCallbackFn);
         console.log('getAllTableIds cbId=' + req._callbackId);
 
@@ -55,7 +55,7 @@ window.odkData = {
     },
 
     query: function(tableId, whereClause, sqlBindParams, groupBy, having,
-            orderByElementKey, orderByDirection, limit, offset, includeKVS, successCallbackFn, 
+            orderByElementKey, orderByDirection, limit, offset, includeKVS, successCallbackFn,
             failureCallbackFn) {
         var that = this;
 
@@ -65,14 +65,14 @@ window.odkData = {
 //         console.log('odkData: query: Need to include the KVS is ' + needToIncludeKVS);
 
         // Test always make this false
-        that.getOdkDataIf().query(tableId, whereClause, sqlBindParams, groupBy, 
+        that.getOdkDataIf().query(tableId, whereClause, sqlBindParams, groupBy,
             having, orderByElementKey, orderByDirection, limit, offset, includeKVS, req._callbackId);
 //             having, orderByElementKey, orderByDirection, limit, offset, false, req._callbackId);
     },
 
     arbitraryQuery: function(tableId, sqlCommand, sqlBindParams, limit, offset, successCallbackFn, failureCallbackFn) {
         var that = this;
-        
+
         var req = that.queueRequest('arbitraryQuery', successCallbackFn, failureCallbackFn);
         console.log('arbitraryQuery cbId=' + req._callbackId);
 
@@ -102,7 +102,7 @@ window.odkData = {
 
     that.getOdkDataIf().changeAccessFilterOfRow(tableId, filterType, filterValue, rowId, req._callbackId);
     },
-	
+
     updateRow: function(tableId, columnNameValueMap, rowId, successCallbackFn, failureCallbackFn) {
         var that = this;
 
@@ -132,7 +132,11 @@ window.odkData = {
 
         var req = that.queueRequest('addCheckpoint', successCallbackFn, failureCallbackFn);
 
-        that.getOdkDataIf().addCheckpoint(tableId, JSON.stringify(columnNameValueMap), rowId, req._callbackId);
+        if(that.getOdkDataIf().getSubmenuPage() !== 'synced') {
+            that.getOdkDataIf().addCheckpoint(tableId, JSON.stringify(columnNameValueMap), rowId, req._callbackId);
+        } else { //little dirty hack, later if tableID equals 'synced' we call cleaup instead of addCheckpointAndCleanup
+            that.getOdkDataIf().addCheckpoint('synced', JSON.stringify(columnNameValueMap), rowId, req._callbackId);
+        }
     },
 
     saveCheckpointAsIncomplete: function(tableId, columnNameValueMap, rowId, successCallbackFn, failureCallbackFn) {
@@ -140,7 +144,7 @@ window.odkData = {
 
         var req = that.queueRequest('saveCheckpointAsIncomplete', successCallbackFn, failureCallbackFn);
 
-        that.getOdkDataIf().saveCheckpointAsIncomplete(tableId, JSON.stringify(columnNameValueMap), rowId, req._callbackId); 
+        that.getOdkDataIf().saveCheckpointAsIncomplete(tableId, JSON.stringify(columnNameValueMap), rowId, req._callbackId);
     },
 
     saveCheckpointAsComplete: function(tableId, columnNameValueMap, rowId, successCallbackFn, failureCallbackFn) {
@@ -173,7 +177,7 @@ window.odkData = {
         var cbId = that._callbackId;
 
         var activeRequest = {
-            _callbackId: cbId, 
+            _callbackId: cbId,
             _successCbFn: successCallbackFn,
             _failureCbFn: failureCallbackFn,
             _requestType: type
@@ -212,7 +216,7 @@ window.odkData = {
                     }
                 } else {
                     console.log('odkData invokeCallbackFn success - requestType: ' + trxn._requestType + ' callbackId: ' + trxn._callbackId);
-                    
+
                     // Need to update the cached KVS if we have a query request type
 //                     if (trxn._requestType === 'query') {
 //                         that.updateCachedMetadataForTableId(jsonResult, cbId);
@@ -220,50 +224,50 @@ window.odkData = {
 
                     if (trxn._successCbFn !== null && trxn._successCbFn !== undefined) {
                         var reqData = new that.__getResultData();
-                        reqData.setBackingObject(jsonResult); 
+                        reqData.setBackingObject(jsonResult);
                         (trxn._successCbFn)(reqData);
                     }
                 }
                 found = true;
             }
         }
-        
+
         if (!found) {
             console.log('odkData invokeCallbackFn - no callback found for callbackId: ' + cbId);
         }
     },
-    
+
 //     updateCachedMetadataForTableId: function(jsonResult, cbId) {
 //         var that = this;
 //         // If the metadata does not contain the tableId log to console
 //         if (jsonResult.metadata.tableId === null || jsonResult.metadata.tableId === undefined) {
 //             throw new Error('table id not found in the metadata for callback id: ' + cbId);
 //         }
-// 
+//
 //         // If there is metadata in this response for a table id that
 //         // is not cached, cache it now
 //         var tableKVSCache = null;
 //         tableKVSCache = that.getCachedMetadataForTableId(jsonResult.metadata.tableId);
-//         
+//
 //         if (tableKVSCache === null) {
 //             if (jsonResult.metadata.keyValueStoreList !== null && jsonResult.metadata.keyValueStoreList !== undefined) {
 //                 console.log('odkData: invokeCallbackFn: adding KVS for tableId: ' + jsonResult.metadata.tableId);
 //                 tableKVSCache = {};
 //                 tableKVSCache.tableId = jsonResult.metadata.tableId;
-//                 tableKVSCache.keyValueStoreList = jsonResult.metadata.keyValueStoreList; 
+//                 tableKVSCache.keyValueStoreList = jsonResult.metadata.keyValueStoreList;
 //                 that._tableKVSCacheMap.push(tableKVSCache);
 //             } else {
-//                 throw new Error('odkData: tableKVSCache does not contain metadata for table id: ' + jsonResult.metadata.tableId + ' but should');   
+//                 throw new Error('odkData: tableKVSCache does not contain metadata for table id: ' + jsonResult.metadata.tableId + ' but should');
 //             }
 //         }
-// 
+//
 //         // At this point, we should always have metadata for any table
-//         // that has been queried before 
+//         // that has been queried before
 //         if (jsonResult.metadata.keyValueStoreList === null || jsonResult.metadata.keyValueStoreList === undefined) {
 //             jsonResult.metadata.keyValueStoreList = tableKVSCache;
 //         }
 //     },
-// 
+//
 //     getCachedMetadataForTableId : function(tableId) {
 //         var that = this;
 //         var tableKVSMetadata = null;
@@ -276,7 +280,7 @@ window.odkData = {
 //         }
 //         return tableKVSMetadata;
 //     },
-// 
+//
 //     needToIncludeKVSInQuery : function(tableId) {
 //         var that = this;
 //         var includeKVS = true;
@@ -304,9 +308,9 @@ window.odkData = {
     },
 
     //
-    // The code for the data object has 
+    // The code for the data object has
     // been moved here since this is only
-    // accessed here  
+    // accessed here
     //
     __getResultData : function() {
 
@@ -333,8 +337,8 @@ window.odkData = {
             resultObj : null,
 
             /**
-             * This function is used to set the 
-             * backing data object that all of the 
+             * This function is used to set the
+             * backing data object that all of the
              * member functions operate on
              *
              * jsonObj should be a JSON object.
@@ -392,7 +396,7 @@ window.odkData = {
                 return colData;
             },
 
-            // get the _id (a.k.a. instance id -- a component of the PK) 
+            // get the _id (a.k.a. instance id -- a component of the PK)
             // of a row in the result set.
             getRowId:function(rowNumber) {
                 var that = this;
@@ -411,7 +415,7 @@ window.odkData = {
                 if (!isInteger(rowNumber)) {
                     throw 'getRowId()--index must be an integer';
                 }
-        
+
                 return that.getData(rowNumber, '_id');
             },
 
@@ -431,7 +435,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.elementKeyMap === null || 
+                if (that.resultObj.metadata.elementKeyMap === null ||
                     that.resultObj.metadata.elementKeyMap === undefined) {
                     return null;
                 }
@@ -470,7 +474,7 @@ window.odkData = {
 
             //////////////////////////////////////////////////////////////////////////////
             // metadata content passed back for use in interpreting the result set
-            
+
             getTableId:function() {
                 var that = this;
                 if (that.resultObj === null || that.resultObj === undefined) {
@@ -496,7 +500,7 @@ window.odkData = {
                 }
 
                 var retval = that.resultObj.metadata.limit;
-                
+
                 if ( retval === undefined ) {
                     return null;
                 }
@@ -515,13 +519,13 @@ window.odkData = {
                 }
 
                 var retval = that.resultObj.metadata.offset;
-                
+
                 if ( retval === undefined ) {
                     return null;
                 }
                 return retval;
             },
-            
+
             getColumns:function() {
                 var that = this;
                 if (that.resultObj === null || that.resultObj === undefined) {
@@ -532,13 +536,13 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.elementKeyMap === null || 
+                if (that.resultObj.metadata.elementKeyMap === null ||
                     that.resultObj.metadata.elementKeyMap === undefined) {
                     return null;
                 }
 
                 var elementKeyMap = that.resultObj.metadata.elementKeyMap;
-                
+
                 var columns = [];
                 var i;
                 var key;
@@ -559,7 +563,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.rowColors === null || 
+                if (that.resultObj.metadata.rowColors === null ||
                     that.resultObj.metadata.rowColors === undefined) {
                     return null;
                 }
@@ -594,7 +598,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.rowColors === null || 
+                if (that.resultObj.metadata.rowColors === null ||
                     that.resultObj.metadata.rowColors === undefined) {
                     return null;
                 }
@@ -630,7 +634,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.statusColors === null || 
+                if (that.resultObj.metadata.statusColors === null ||
                     that.resultObj.metadata.statusColors === undefined) {
                     return null;
                 }
@@ -665,7 +669,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.statusColors === null || 
+                if (that.resultObj.metadata.statusColors === null ||
                     that.resultObj.metadata.statusColors === undefined) {
                     return null;
                 }
@@ -701,7 +705,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.columnColors === null || 
+                if (that.resultObj.metadata.columnColors === null ||
                     that.resultObj.metadata.columnColors === undefined) {
                     return null;
                 }
@@ -718,7 +722,7 @@ window.odkData = {
                     throw 'getColumnForegroundColor()--elementKey must be a string';
                 }
 
-                if (that.resultObj.metadata.columnColors[elementKey] === null || 
+                if (that.resultObj.metadata.columnColors[elementKey] === null ||
                     that.resultObj.metadata.columnColors[elementKey] === undefined) {
                     return null;
                 }
@@ -745,7 +749,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.columnColors === null || 
+                if (that.resultObj.metadata.columnColors === null ||
                     that.resultObj.metadata.columnColors === undefined) {
                     return null;
                 }
@@ -788,7 +792,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.mapIndex === null || 
+                if (that.resultObj.metadata.mapIndex === null ||
                     that.resultObj.metadata.mapIndex === undefined) {
                     return null;
                 }
@@ -808,7 +812,7 @@ window.odkData = {
                     return retVal;
                 }
 
-                if (that.resultObj.metadata.keyValueStoreList === null || 
+                if (that.resultObj.metadata.keyValueStoreList === null ||
                     that.resultObj.metadata.keyValueStoreList === undefined) {
                     return retVal;
                 }
@@ -818,12 +822,12 @@ window.odkData = {
                 for (var i = 0; i < kvsLen; i++) {
                     var kvs = that.resultObj.metadata.keyValueStoreList[i];
                     if (kvs.partition === 'Column' &&
-                        kvs.aspect === elementPath && 
+                        kvs.aspect === elementPath &&
                         kvs.key === 'displayName') {
                         retVal = kvs.value;
                     }
                 }
-      
+
                 return retVal;
             },
 
@@ -838,7 +842,7 @@ window.odkData = {
                     return retVal;
                 }
 
-                if (that.resultObj.metadata.keyValueStoreList === null || 
+                if (that.resultObj.metadata.keyValueStoreList === null ||
                     that.resultObj.metadata.keyValueStoreList === undefined) {
                     return retVal;
                 }
@@ -848,14 +852,14 @@ window.odkData = {
                 for (var i = 0; i < kvsLen; i++) {
                     var kvs = that.resultObj.metadata.keyValueStoreList[i];
                     if (kvs.partition === 'Table' &&
-                        kvs.aspect === 'default' && 
+                        kvs.aspect === 'default' &&
                         kvs.key === 'displayName') {
                         retVal = kvs.value;
                     }
                 }
 
                 return retVal;
-        
+
             },
 
             getIsTableLocked:function(tableId) {
@@ -880,7 +884,7 @@ window.odkData = {
                 for (var i = 0; i < kvsLen; i++) {
                     var kvs = that.resultObj.metadata.keyValueStoreList[i];
                     if (kvs.partition === 'Table' &&
-                        kvs.aspect === 'security' && 
+                        kvs.aspect === 'security' &&
                         kvs.key === 'locked') {
                         var v = kvs.value;
                         if ( v !== null && v !== undefined && (v.toLowerCase() == "true") ) {
@@ -902,7 +906,7 @@ window.odkData = {
                 }
 
                 return that.resultObj.metadata.canCreateRow;
-        
+
             },
 
             // may need to get the raw metadata content to get access to some of the content.
@@ -930,7 +934,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.tableIds === null || 
+                if (that.resultObj.metadata.tableIds === null ||
                     that.resultObj.metadata.tableIds === undefined) {
                     return null;
                 }
@@ -949,7 +953,7 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.roles === null || 
+                if (that.resultObj.metadata.roles === null ||
                     that.resultObj.metadata.roles === undefined) {
                     return null;
                 }
@@ -968,14 +972,14 @@ window.odkData = {
                     return null;
                 }
 
-                if (that.resultObj.metadata.users === null || 
+                if (that.resultObj.metadata.users === null ||
                     that.resultObj.metadata.users === undefined) {
                     return null;
                 }
 
                 return that.resultObj.metadata.users;
             }
-            
+
         };
 
         return pub;
