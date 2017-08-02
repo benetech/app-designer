@@ -332,6 +332,7 @@ return Backbone.View.extend({
         }
         that.eventTimeStamp = evt.timeStamp;
         var ctxt = that.controller.newContext(evt, "screenManager.gotoNextScreen");
+        that.refreshScreen(ctxt);
         that.controller.enqueueTriggeringContext($.extend({},ctxt,{success:function() {
             ctxt.log('D','screenManager.gotoNextScreen',
                 ((that.activeScreen !== null && that.activeScreen !== undefined) ? ("px: " + that.activeScreen.promptIdx) : "no current activeScreen"));
@@ -371,6 +372,7 @@ return Backbone.View.extend({
         }
         that.eventTimeStamp = evt.timeStamp;
         var ctxt = that.controller.newContext(evt, "screenManager.gotoPreviousScreen");
+        that.refreshScreen(ctxt);
         that.controller.enqueueTriggeringContext($.extend({},ctxt,{success:function() {
             ctxt.log('D','screenManager.gotoPreviousScreen',
                 ((that.activeScreen !== null && that.activeScreen !== undefined) ? ("px: " + that.activeScreen.promptIdx) : "no current activeScreen"));
@@ -496,7 +498,12 @@ return Backbone.View.extend({
         }}));
     },
     openOptions: function(evt) {
-        odkSurvey.saveAllAsCompleteThenPopBackStack();
+        var ctxt = this.controller.newContext(evt, "screenManager.finalizeChanges");
+        this.refreshScreen(ctxt);
+        //we need any delay so the screen gets refreshed, weird but works
+        setTimeout(function(){
+            odkSurvey.saveAllAsCompleteThenPopBackStack();
+        }, 1);
     },
     openLanguagePopup: function(evt) {
         var that = this;
