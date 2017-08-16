@@ -574,7 +574,14 @@ return {
 	_process_odkData_error: function(ctxt, errorMsg) {
 		var that = this;
 
-		if ( errorMsg.startsWith(that._auth_error) ) {
+        var startsWith = true;
+        	for (var i = 0; i < that._auth_error.length; i++) {
+                if (that._auth_error.charAt(i) != errorMsg.charAt(i))
+        		    startsWith = false;
+            }
+        }
+
+		if (startsWith == true) {
 			// we cannot make the changes because of an Authorization violation. Clear them!
 			that.pendingChanges = {};
 		}
